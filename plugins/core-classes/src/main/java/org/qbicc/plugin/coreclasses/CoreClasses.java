@@ -193,7 +193,7 @@ public final class CoreClasses {
         fieldBuilder.setSignature(BaseTypeSignature.I);
         fieldBuilder.setIndex(index);
         fieldBuilder.setName("dims");
-        fieldBuilder.setType(enclosing.getContext().getTypeSystem().getSignedInteger32Type());
+        fieldBuilder.setType(enclosing.getContext().getTypeSystem().getUnsignedInteger8Type());
         fieldBuilder.setModifiers(ClassFile.ACC_FINAL | ClassFile.ACC_PRIVATE | ClassFile.I_ACC_NO_REFLECT | ClassFile.I_ACC_NO_RESOLVE);
         return fieldBuilder.build();
     }
