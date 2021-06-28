@@ -108,7 +108,7 @@ public final class CoreClasses {
         builder.setEnclosingType(jlcDef);
         builder.setDescriptor(BaseTypeDescriptor.V);
         builder.setSignature(BaseTypeSignature.V);
-        builder.setType(ts.getSignedInteger32Type());
+        builder.setType(ts.getUnsignedInteger8Type());
         field = builder.build();
         jlc.injectField(field);
         classDimensionField = field;
