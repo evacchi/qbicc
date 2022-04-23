@@ -93,11 +93,13 @@ abstract class AbstractClangInvoker implements MessagingToolInvoker {
         OutputDestination errorHandler = OutputDestination.of(AbstractClangInvoker::collectError, this, StandardCharsets.UTF_8);
         List<String> cmd = new ArrayList<>();
         cmd.add(getTool().getExecutablePath().toString());
+        cmd.add("--sysroot=/Users/evacchi/Devel/fun/wasm/llvm/wasi-sysroot");
         addArguments(cmd);
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmd);
         pb.environment().put("LC_ALL", "C");
         pb.environment().put("LANG", "C");
+
         getSource().transferTo(OutputDestination.of(pb, errorHandler, OutputDestination.discarding(), p -> {
             int ev = p.exitValue();
             if (ev != 0) {
