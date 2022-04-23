@@ -6,6 +6,7 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import org.qbicc.driver.plugin.DriverPlugin;
 import org.qbicc.interpreter.Vm;
 import org.qbicc.interpreter.VmThread;
 import org.qbicc.interpreter.impl.VmImpl;
+import org.qbicc.machine.arch.OS;
 import org.qbicc.machine.arch.Platform;
 import org.qbicc.machine.object.ObjectFileProvider;
 import org.qbicc.machine.probe.CProbe;
@@ -285,42 +287,75 @@ public class Main implements Callable<DiagnosticContext> {
                     CProbe probe = probeBuilder.build();
                     try {
                         CProbe.Result probeResult = probe.run(toolChain, objectFileProvider, initialContext);
-                        if (probeResult == null) {
+                        if (probeResult == null && platform.getOs() != OS.WASI) {
                             initialContext.error("Type system probe compiler execution failed");
                         } else {
-                            long charSize = probeResult.getTypeInfo(char_t).getSize();
-                            if (charSize != 1) {
-                                initialContext.error("Unexpected size of `char`: %d", Long.valueOf(charSize));
-                            }
                             TypeSystem.Builder tsBuilder = TypeSystem.builder();
-                            tsBuilder.setBoolSize((int) probeResult.getTypeInfo(_Bool).getSize());
-                            tsBuilder.setBoolAlignment((int) probeResult.getTypeInfo(_Bool).getAlign());
-                            tsBuilder.setByteBits(probeResult.getConstantInfo("CHAR_BIT").getValueAsInt());
-                            tsBuilder.setInt8Size((int) probeResult.getTypeInfo(int8_t).getSize());
-                            tsBuilder.setInt8Alignment((int) probeResult.getTypeInfo(int8_t).getAlign());
-                            tsBuilder.setInt16Size((int) probeResult.getTypeInfo(int16_t).getSize());
-                            tsBuilder.setInt16Alignment((int) probeResult.getTypeInfo(int16_t).getAlign());
-                            tsBuilder.setInt32Size((int) probeResult.getTypeInfo(int32_t).getSize());
-                            tsBuilder.setInt32Alignment((int) probeResult.getTypeInfo(int32_t).getAlign());
-                            tsBuilder.setInt64Size((int) probeResult.getTypeInfo(int64_t).getSize());
-                            tsBuilder.setInt64Alignment((int) probeResult.getTypeInfo(int64_t).getAlign());
-                            tsBuilder.setFloat32Size((int) probeResult.getTypeInfo(float_t).getSize());
-                            tsBuilder.setFloat32Alignment((int) probeResult.getTypeInfo(float_t).getAlign());
-                            tsBuilder.setFloat64Size((int) probeResult.getTypeInfo(double_t).getSize());
-                            tsBuilder.setFloat64Alignment((int) probeResult.getTypeInfo(double_t).getAlign());
-                            tsBuilder.setPointerSize((int) probeResult.getTypeInfo(void_p).getSize());
-                            tsBuilder.setPointerAlignment((int) probeResult.getTypeInfo(void_p).getAlign());
-                            tsBuilder.setMaxAlignment((int) probeResult.getTypeInfo(max_align_t).getAlign());
-                            // todo: function alignment probe
-                            // for now, references == pointers
-                            tsBuilder.setReferenceSize((int) probeResult.getTypeInfo(void_p).getSize());
-                            tsBuilder.setReferenceAlignment((int) probeResult.getTypeInfo(void_p).getAlign());
-                            CProbe.Type type_id_type = smallTypeIds ? int16_t : int32_t;
-                            tsBuilder.setTypeIdSize((int) probeResult.getTypeInfo(type_id_type).getSize());
-                            tsBuilder.setTypeIdAlignment((int) probeResult.getTypeInfo(type_id_type).getAlign());
-                            tsBuilder.setEndianness(probeResult.getByteOrder());
-                            if (nogc) {
-                                new NoGcTypeSystemConfigurator().accept(tsBuilder);
+
+                            if (platform.getOs() == OS.WASI) {
+                                tsBuilder.setBoolSize(1);
+                                tsBuilder.setBoolAlignment(1);
+                                tsBuilder.setByteBits(8);
+                                tsBuilder.setInt8Size(8);
+                                tsBuilder.setInt8Alignment(8);
+                                tsBuilder.setInt16Size(16);
+                                tsBuilder.setInt16Alignment(16);
+                                tsBuilder.setInt32Size(32);
+                                tsBuilder.setInt32Alignment(32);
+                                tsBuilder.setInt64Size(64);
+                                tsBuilder.setInt64Alignment(64);
+                                tsBuilder.setFloat32Size(32);
+                                tsBuilder.setFloat32Alignment(32);
+                                tsBuilder.setFloat64Size(64);
+                                tsBuilder.setFloat64Alignment(64);
+                                tsBuilder.setPointerSize(32);
+                                tsBuilder.setPointerAlignment(32);
+                                tsBuilder.setMaxAlignment(32);
+                                // todo: function alignment probe
+                                // for now, references == pointers
+                                tsBuilder.setReferenceSize(32);
+                                tsBuilder.setReferenceAlignment(32);
+                                CProbe.Type type_id_type = smallTypeIds ? int16_t : int32_t;
+                                tsBuilder.setTypeIdSize(32);//(int) probeResult.getTypeInfo(type_id_type).getSize());
+                                tsBuilder.setTypeIdAlignment(32);
+                                tsBuilder.setEndianness(ByteOrder.LITTLE_ENDIAN);
+                                if (nogc) {
+                                    new NoGcTypeSystemConfigurator().accept(tsBuilder);
+                                }
+                            } else {
+                                long charSize = probeResult.getTypeInfo(char_t).getSize();
+                                if (charSize != 1) {
+                                    initialContext.error("Unexpected size of `char`: %d", Long.valueOf(charSize));
+                                }
+                                tsBuilder.setBoolSize((int) probeResult.getTypeInfo(_Bool).getSize());
+                                tsBuilder.setBoolAlignment((int) probeResult.getTypeInfo(_Bool).getAlign());
+                                tsBuilder.setByteBits(probeResult.getConstantInfo("CHAR_BIT").getValueAsInt());
+                                tsBuilder.setInt8Size((int) probeResult.getTypeInfo(int8_t).getSize());
+                                tsBuilder.setInt8Alignment((int) probeResult.getTypeInfo(int8_t).getAlign());
+                                tsBuilder.setInt16Size((int) probeResult.getTypeInfo(int16_t).getSize());
+                                tsBuilder.setInt16Alignment((int) probeResult.getTypeInfo(int16_t).getAlign());
+                                tsBuilder.setInt32Size((int) probeResult.getTypeInfo(int32_t).getSize());
+                                tsBuilder.setInt32Alignment((int) probeResult.getTypeInfo(int32_t).getAlign());
+                                tsBuilder.setInt64Size((int) probeResult.getTypeInfo(int64_t).getSize());
+                                tsBuilder.setInt64Alignment((int) probeResult.getTypeInfo(int64_t).getAlign());
+                                tsBuilder.setFloat32Size((int) probeResult.getTypeInfo(float_t).getSize());
+                                tsBuilder.setFloat32Alignment((int) probeResult.getTypeInfo(float_t).getAlign());
+                                tsBuilder.setFloat64Size((int) probeResult.getTypeInfo(double_t).getSize());
+                                tsBuilder.setFloat64Alignment((int) probeResult.getTypeInfo(double_t).getAlign());
+                                tsBuilder.setPointerSize((int) probeResult.getTypeInfo(void_p).getSize());
+                                tsBuilder.setPointerAlignment((int) probeResult.getTypeInfo(void_p).getAlign());
+                                tsBuilder.setMaxAlignment((int) probeResult.getTypeInfo(max_align_t).getAlign());
+                                // todo: function alignment probe
+                                // for now, references == pointers
+                                tsBuilder.setReferenceSize((int) probeResult.getTypeInfo(void_p).getSize());
+                                tsBuilder.setReferenceAlignment((int) probeResult.getTypeInfo(void_p).getAlign());
+                                CProbe.Type type_id_type = smallTypeIds ? int16_t : int32_t;
+                                tsBuilder.setTypeIdSize((int) probeResult.getTypeInfo(type_id_type).getSize());
+                                tsBuilder.setTypeIdAlignment((int) probeResult.getTypeInfo(type_id_type).getAlign());
+                                tsBuilder.setEndianness(probeResult.getByteOrder());
+                                if (nogc) {
+                                    new NoGcTypeSystemConfigurator().accept(tsBuilder);
+                                }
                             }
                             builder.setTypeSystem(tsBuilder.build());
                             // add additional manual initializers by chaining `.andThen(...)`
