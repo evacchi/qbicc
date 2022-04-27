@@ -85,7 +85,7 @@ final class ClangCCompilerInvokerImpl extends AbstractClangInvoker implements Cl
         cmd.add(platform.getCpu().toString() + "-" + platform.getOs().toString() + "-" + platform.getAbi().toString());
         if (sourceLanguage == SourceLanguage.C && platform.getOs() != OS.WASI) {
             Collections.addAll(cmd, "-std=gnu11", "-f" + "input-charset=UTF-8");
-//            cmd.add("-pthread");
+            cmd.add("-pthread");
         }
         cmd.add("-pipe");
         for (Path includePath : includePaths) {
