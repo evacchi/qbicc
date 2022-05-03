@@ -18,8 +18,8 @@ public final class NativeXtorLoweringHook {
 
     public static void process(CompilationContext ctxt) {
         NativeInfo nativeInfo = NativeInfo.get(ctxt);
-        processOneList(ctxt, nativeInfo.getGlobalConstructors(), ProgramModule::addConstructor);
-        processOneList(ctxt, nativeInfo.getGlobalDestructors(), ProgramModule::addDestructor);
+//        processOneList(ctxt, nativeInfo.getGlobalConstructors(), ProgramModule::addConstructor);
+//        processOneList(ctxt, nativeInfo.getGlobalDestructors(), ProgramModule::addDestructor);
     }
 
     @FunctionalInterface

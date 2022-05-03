@@ -135,11 +135,11 @@ final class GlobalImpl extends AbstractYieldingInstruction implements Global {
             target.append(' ');
         }
         final int addressSpace = this.addressSpace;
-        if (addressSpace != 0) {
-            target.append("addrspace(");
-            target.append(Integer.toString(addressSpace));
-            target.append(") ");
-        }
+//        if (addressSpace != 0) {
+//            target.append("addrspace(");
+//            target.append(Integer.toString(addressSpace));
+//            target.append(") ");
+//        }
         if (appending) {
             target.append("appending");
             target.append(' ');
