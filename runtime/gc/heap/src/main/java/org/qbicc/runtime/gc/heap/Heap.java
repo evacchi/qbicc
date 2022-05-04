@@ -241,150 +241,147 @@ public final class Heap {
     }
 
     // TODO: hoist error reporting to some kind of entry-point prologue
-//    @constructor(priority = 0)
+    @constructor(priority = 0)
     @export
-    public static void initHeap(c_int argc, char_ptr[] argv) {
+    public static void initHeap(c_int argc, char_ptr_ptr argv) {
 
-        void_ptr heap = malloc(word(1_073_741_824));
-        Heap.heap = heap;
-        Heap.allocated = 0;
-        Heap.committed = 0;
-        Heap.limit = 1_073_741_824;
-        Heap.initOk = true;
-        VarHandle.releaseFence();
-        // The empty heap is configured!
-        return;
-//
-//
-//        if (Build.isHost()) {
-//            throw new IllegalStateException();
-//        }
-//        long pageMask;
-//        // Initializer function - JDK AND HEAP NOT YET AVAILABLE
-//        if (Build.Target.isPosix()) {
-//            int pageSize = sysconf(_SC_PAGE_SIZE).intValue();
-//            if (pageSize == -1) {
-//                errorMsgTemplate = utf8z("Failed to determine page size: %s\n").cast();
-//                initErrno = errno;
-//                return;
-//            }
-//            if (Integer.bitCount(pageSize) != 1) {
-//                // not a power of 2? but not likely enough to be worth spending memory on an error message
-//                return;
-//            }
-//            Heap.pageSize = pageSize;
-//            pageMask = pageSize - 1;
-//        } else {
-//            errorMsgTemplate = utf8z("Platform not supported\n").cast();
-//            return;
-//        }
-//        // cycle through the arguments to find heap size options
-//        long maxHeap = -1;
-//        long minHeap = -1;
-//        for (int i = 1; i < argc.intValue(); i ++) {
-//            const_char_ptr arg = argv[i].cast();
-//            if (strncmp(arg, utf8z("-Xmx"), word(4)) == zero()) {
-//                maxHeap = parseMemSize(arg.plus(4));
-//                if (maxHeap == -1) {
-//                    // failed
-//                    return;
-//                }
-//                if (maxHeap < pageSize) {
-//                    maxHeap = pageSize;
-//                }
-//            } else if (strncmp(arg, utf8z("-Xms"), word(4)) == zero()) {
-//                minHeap = parseMemSize(arg.plus(4));
-//                if (minHeap == -1) {
-//                    // failed
-//                    return;
-//                }
-//                if (minHeap < pageSize) {
-//                    minHeap = pageSize;
-//                }
-//            } else if (strcmp(arg, utf8z("--")) == zero()) {
-//                // arguments done
-//                break;
-//            }
-//        }
-//        if (maxHeap == -1 && minHeap == -1) {
-//            maxHeap = getConfiguredMaxHeapSize();
-//            minHeap = getConfiguredMinHeapSize();
-//            // round up to page size
-//            maxHeap = (maxHeap + pageMask) & ~pageMask;
-//            minHeap = (minHeap + pageMask) & ~pageMask;
-//            if (maxHeap < minHeap) {
-//                maxHeap = minHeap;
-//            }
-//        } else if (maxHeap == -1) {
-//            maxHeap = getConfiguredMaxHeapSize();
-//            // round up to page size
-//            maxHeap = (maxHeap + pageMask) & ~pageMask;
-//            minHeap = (minHeap + pageMask) & ~pageMask;
-//            if (maxHeap < minHeap) {
-//                // minHeap takes precedence because maxHeap was not given
-//                maxHeap = minHeap;
-//            }
-//        } else if (minHeap == -1) {
-//            minHeap = getConfiguredMinHeapSize();
-//            // round up to page size
-//            maxHeap = (maxHeap + pageMask) & ~pageMask;
-//            minHeap = (minHeap + pageMask) & ~pageMask;
-//            if (maxHeap < minHeap) {
-//                // maxHeap takes precedence because minHeap was not given
-//                minHeap = maxHeap;
-//            }
-//        } else {
-//            // round up to page size
-//            maxHeap = (maxHeap + pageMask) & ~pageMask;
-//            minHeap = (minHeap + pageMask) & ~pageMask;
-//            if (maxHeap < minHeap) {
-//                maxHeap = minHeap;
-//            }
-//        }
-//        // First, reserve the full address space that we need
-//        long heapAlignment = getConfiguredHeapAlignment();
-//        void_ptr heap = malloc(word(1e9));
-//        void_ptr heap = mmap(zero(),
-//            word(maxHeap + heapAlignment),
-//            PROT_NONE,
-//            wordOr(MAP_ANON, MAP_PRIVATE),
-//            word(-1),
-//            zero()
-//        );
-//        if (heap == MAP_FAILED) {
-//            errorMsgTemplate = utf8z("Failed to map initial heap: %s\n").cast();
-//            initErrno = errno;
-//            // failed
-//            return;
-//        }
-//        // align the heap
-//        long misalignment = heap.longValue() & (heapAlignment - 1);
-//        // release the extra address space at the start and the end
-//        long trimAtStart = heapAlignment - misalignment;
-//        if (trimAtStart > 0) {
-//            munmap(heap, word(trimAtStart));
-//            heap = heap.plus(trimAtStart);
-//        }
-//        // (heap is now aligned)
-//        if (misalignment > 0) {
-//            munmap(heap.plus(maxHeap), word(misalignment));
-//        }
-//        // next attempt to commit the minimum heap size
-//        c_int res = mprotect(heap, word(minHeap), wordOr(PROT_READ, PROT_WRITE));
-//        if (res == word(-1)) {
-//            errorMsgTemplate = utf8z("Failed to commit minimum heap space: %s\n").cast();
-//            initErrno = errno;
-//            // failed
-//            return;
-//        }
+//        void_ptr heap = malloc(word(1_073_741_824));
 //        Heap.heap = heap;
 //        Heap.allocated = 0;
-//        Heap.committed = minHeap;
-//        Heap.limit = maxHeap;
+//        Heap.committed = 0;
+//        Heap.limit = 1_073_741_824;
 //        Heap.initOk = true;
 //        VarHandle.releaseFence();
 //        // The empty heap is configured!
 //        return;
+        if (Build.isHost()) {
+            throw new IllegalStateException();
+        }
+        long pageMask;
+        // Initializer function - JDK AND HEAP NOT YET AVAILABLE
+        if (Build.Target.isPosix()) {
+            int pageSize = sysconf(_SC_PAGE_SIZE).intValue();
+            if (pageSize == -1) {
+                errorMsgTemplate = utf8z("Failed to determine page size: %s\n").cast();
+                initErrno = errno;
+                return;
+            }
+            if (Integer.bitCount(pageSize) != 1) {
+                // not a power of 2? but not likely enough to be worth spending memory on an error message
+                return;
+            }
+            Heap.pageSize = pageSize;
+            pageMask = pageSize - 1;
+        } else {
+            errorMsgTemplate = utf8z("Platform not supported\n").cast();
+            return;
+        }
+        // cycle through the arguments to find heap size options
+        long maxHeap = -1;
+        long minHeap = -1;
+        for (int i = 1; i < argc.intValue(); i ++) {
+            const_char_ptr arg = argv.asArray()[i].cast();
+            if (strncmp(arg, utf8z("-Xmx"), word(4)) == zero()) {
+                maxHeap = parseMemSize(arg.plus(4));
+                if (maxHeap == -1) {
+                    // failed
+                    return;
+                }
+                if (maxHeap < pageSize) {
+                    maxHeap = pageSize;
+                }
+            } else if (strncmp(arg, utf8z("-Xms"), word(4)) == zero()) {
+                minHeap = parseMemSize(arg.plus(4));
+                if (minHeap == -1) {
+                    // failed
+                    return;
+                }
+                if (minHeap < pageSize) {
+                    minHeap = pageSize;
+                }
+            } else if (strcmp(arg, utf8z("--")) == zero()) {
+                // arguments done
+                break;
+            }
+        }
+        if (maxHeap == -1 && minHeap == -1) {
+            maxHeap = getConfiguredMaxHeapSize();
+            minHeap = getConfiguredMinHeapSize();
+            // round up to page size
+            maxHeap = (maxHeap + pageMask) & ~pageMask;
+            minHeap = (minHeap + pageMask) & ~pageMask;
+            if (maxHeap < minHeap) {
+                maxHeap = minHeap;
+            }
+        } else if (maxHeap == -1) {
+            maxHeap = getConfiguredMaxHeapSize();
+            // round up to page size
+            maxHeap = (maxHeap + pageMask) & ~pageMask;
+            minHeap = (minHeap + pageMask) & ~pageMask;
+            if (maxHeap < minHeap) {
+                // minHeap takes precedence because maxHeap was not given
+                maxHeap = minHeap;
+            }
+        } else if (minHeap == -1) {
+            minHeap = getConfiguredMinHeapSize();
+            // round up to page size
+            maxHeap = (maxHeap + pageMask) & ~pageMask;
+            minHeap = (minHeap + pageMask) & ~pageMask;
+            if (maxHeap < minHeap) {
+                // maxHeap takes precedence because minHeap was not given
+                minHeap = maxHeap;
+            }
+        } else {
+            // round up to page size
+            maxHeap = (maxHeap + pageMask) & ~pageMask;
+            minHeap = (minHeap + pageMask) & ~pageMask;
+            if (maxHeap < minHeap) {
+                maxHeap = minHeap;
+            }
+        }
+        // First, reserve the full address space that we need
+        long heapAlignment = getConfiguredHeapAlignment();
+        void_ptr heap = mmap(zero(),
+            word(maxHeap + heapAlignment),
+            PROT_NONE,
+            wordOr(MAP_ANON, MAP_PRIVATE),
+            word(-1),
+            zero()
+        );
+        if (heap == MAP_FAILED) {
+            errorMsgTemplate = utf8z("Failed to map initial heap: %s\n").cast();
+            initErrno = errno;
+            // failed
+            return;
+        }
+        // align the heap
+        long misalignment = heap.longValue() & (heapAlignment - 1);
+        // release the extra address space at the start and the end
+        long trimAtStart = heapAlignment - misalignment;
+        if (trimAtStart > 0) {
+            munmap(heap, word(trimAtStart));
+            heap = heap.plus(trimAtStart);
+        }
+        // (heap is now aligned)
+        if (misalignment > 0) {
+            munmap(heap.plus(maxHeap), word(misalignment));
+        }
+        // next attempt to commit the minimum heap size
+        c_int res = mprotect(heap, word(minHeap), wordOr(PROT_READ, PROT_WRITE));
+        if (res == word(-1)) {
+            errorMsgTemplate = utf8z("Failed to commit minimum heap space: %s\n").cast();
+            initErrno = errno;
+            // failed
+            return;
+        }
+        Heap.heap = heap;
+        Heap.allocated = 0;
+        Heap.committed = minHeap;
+        Heap.limit = maxHeap;
+        Heap.initOk = true;
+        VarHandle.releaseFence();
+        // The empty heap is configured!
+        return;
     }
 
     @export(withScope = ExportScope.LOCAL)
@@ -420,7 +417,7 @@ public final class Heap {
         return num;
     }
 
-//    @destructor(priority = 0)
+    @destructor(priority = 0)
     @export
     static void destroyHeap() {
         VarHandle.acquireFence();
