@@ -38,6 +38,8 @@ public final class WasmObjectFile implements ObjectFile {
                 List<String> l = Arrays.asList(matcher.group(2).split("\\\\"));
                 Collections.reverse(l);
                 int i = Integer.parseInt(String.join("", l));
+
+                System.out.printf("%s -> %d\n", matcher.group(1), i);
                 sizes.put(matcher.group(1), i);
             }
         }
@@ -45,17 +47,17 @@ public final class WasmObjectFile implements ObjectFile {
 
     @Override
     public int getSymbolValueAsByte(String name) {
-        return sizes.getOrDefault(name, 0);
+        return sizes.getOrDefault(name, 1);
     }
 
     @Override
     public int getSymbolValueAsInt(String name) {
-        return sizes.getOrDefault(name, 0);
+        return sizes.getOrDefault(name, 1);
     }
 
     @Override
     public long getSymbolValueAsLong(String name) {
-        return sizes.getOrDefault(name, 0);
+        return sizes.getOrDefault(name, 1);
     }
 
     @Override
