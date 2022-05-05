@@ -1,25 +1,21 @@
 package org.qbicc.machine.file.wasm;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.EnumSet;
+import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import asmble.ast.Node;
+import asmble.ast.SExpr;
+import asmble.io.SExprToAst;
+import asmble.io.StrToSExpr;
+import kotlin.Pair;
 import org.qbicc.machine.arch.Cpu;
 import org.qbicc.machine.arch.ObjectType;
-import org.qbicc.machine.file.bin.BinaryBuffer;
 import org.qbicc.machine.object.ObjectFile;
 import org.qbicc.machine.object.Section;
 
@@ -31,17 +27,8 @@ public final class WasmObjectFile implements ObjectFile {
     private static final Pattern DATA = Pattern.compile("^\s*\\(data \\$([a-w0-9_]+) \\(i32.*\\) \"(.*)\"\\).*");
     Map<String, Byte> sizes = new HashMap<>();
 
-    public WasmObjectFile(final String buffer) {
-        for (String ln : buffer.split("\n")) {
-            Matcher matcher = DATA.matcher(ln);
-            if (matcher.find()) {
-                String[] data = matcher.group(2).split("\\\\");
-                String d = data[0].isEmpty()? data[1] : data[0];
-                byte b = Byte.parseByte(d);
-                System.out.printf("%20s   %d\n", matcher.group(1), b);
-                sizes.put(matcher.group(1), b);
-            }
-        }
+    public WasmObjectFile(Path path) throws IOException {
+        Webassembly webassembly = Webassembly.fromFile(path.toString());
     }
 
     @Override
