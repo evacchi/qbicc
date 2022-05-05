@@ -26,10 +26,10 @@ public class TestSimpleCompile {
     @Test
     public void testSimpleCompile() throws Exception {
         final Path objectFilePath = Files.createTempFile("temp", ".o");
-        Platform plaf = Platform.HOST_PLATFORM;
+        Platform plaf = Platform.parse("wasm-wasm-wasi");
         Optional<ObjectFileProvider> of = ObjectFileProvider.findProvider(plaf.getObjectType(), getClass().getClassLoader());
         assumeTrue(of.isPresent());
-        Path clang = ToolUtil.findExecutable("clang");
+        Path clang = ToolUtil.findExecutable("emcc");
         assumeTrue(clang != null);
         final Iterable<ClangToolChainImpl> tools = ToolProvider.findAllTools(ClangToolChainImpl.class, plaf, c -> true,
             TestSimpleCompile.class.getClassLoader(), List.of(clang));
@@ -45,10 +45,10 @@ public class TestSimpleCompile {
                 }
             }
         });
-        ib.setSource(InputSource.from("extern int foo; int foo = 0x12345678;"));
+        ib.setSource(InputSource.from("extern int foo; int foo = 0x1234;"));
         ib.invoke();
         assertNotNull(objectFilePath);
         ObjectFile objectFile = of.get().openObjectFile(objectFilePath);
-        assertEquals(0x12345678, objectFile.getSymbolValueAsInt("foo"));
+        assertEquals(0x1234, objectFile.getSymbolValueAsInt("foo"));
     }
 }

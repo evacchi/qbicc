@@ -28,51 +28,54 @@ import org.qbicc.machine.object.Section;
  */
 public final class WasmObjectFile implements ObjectFile {
 
-    private static final Pattern DATA = Pattern.compile("^\s*\\(data \\$([a-w0-9_]+) \\(i32.*\\) \"(.*)\"\\)$");
-    Map<String, Integer> sizes = new HashMap<>();
+    private static final Pattern DATA = Pattern.compile("^\s*\\(data \\$([a-w0-9_]+) \\(i32.*\\) \"(.*)\"\\).*");
+    Map<String, Byte> sizes = new HashMap<>();
 
     public WasmObjectFile(final String buffer) {
         for (String ln : buffer.split("\n")) {
             Matcher matcher = DATA.matcher(ln);
             if (matcher.find()) {
-                List<String> l = Arrays.asList(matcher.group(2).split("\\\\"));
-                Collections.reverse(l);
-                int i = Integer.parseInt(String.join("", l));
-
-                System.out.printf("%s -> %d\n", matcher.group(1), i);
-                sizes.put(matcher.group(1), i);
+                String[] data = matcher.group(2).split("\\\\");
+                String d = data[0].isEmpty()? data[1] : data[0];
+                byte b = Byte.parseByte(d);
+                System.out.printf("%20s   %d\n", matcher.group(1), b);
+                sizes.put(matcher.group(1), b);
             }
         }
     }
 
     @Override
     public int getSymbolValueAsByte(String name) {
-        return sizes.getOrDefault(name, 1);
+        return getSize(name);
     }
 
     @Override
     public int getSymbolValueAsInt(String name) {
-        return sizes.getOrDefault(name, 1);
+        return getSize(name);
     }
 
     @Override
     public long getSymbolValueAsLong(String name) {
-        return sizes.getOrDefault(name, 1);
+        return getSize(name);
     }
 
     @Override
     public byte[] getSymbolAsBytes(String name, int size) {
-        return new byte[0];
+        return new byte[] { getSize(name) };
     }
 
     @Override
     public String getSymbolValueAsUtfString(String name, int nbytes) {
-        return null;
+        return new String(getSymbolAsBytes(name, nbytes), StandardCharsets.UTF_8);
+    }
+
+    private Byte getSize(String name) {
+        return sizes.getOrDefault(name, (byte) 1);
     }
 
     @Override
     public long getSymbolSize(String name) {
-        return getSymbolValueAsInt(name);
+        return getSize(name);
     }
 
     @Override
