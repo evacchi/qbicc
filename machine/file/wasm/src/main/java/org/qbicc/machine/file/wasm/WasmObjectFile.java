@@ -5,6 +5,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -12,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.IntFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.qbicc.machine.arch.Cpu;
 import org.qbicc.machine.arch.ObjectType;
@@ -24,26 +28,34 @@ import org.qbicc.machine.object.Section;
  */
 public final class WasmObjectFile implements ObjectFile {
 
-    public WasmObjectFile(final BinaryBuffer buffer) throws IOException {
+    private static final Pattern DATA = Pattern.compile("^\s*\\(data \\$([a-w0-9_]+) \\(i32.*\\) \"(.*)\"\\)$");
+    Map<String, Integer> sizes = new HashMap<>();
+
+    public WasmObjectFile(final String buffer) {
+        for (String ln : buffer.split("\n")) {
+            Matcher matcher = DATA.matcher(ln);
+            if (matcher.find()) {
+                List<String> l = Arrays.asList(matcher.group(2).split("\\\\"));
+                Collections.reverse(l);
+                int i = Integer.parseInt(String.join("", l));
+                sizes.put(matcher.group(1), i);
+            }
+        }
     }
 
     @Override
     public int getSymbolValueAsByte(String name) {
-        return 1;
+        return sizes.getOrDefault(name, 0);
     }
 
     @Override
     public int getSymbolValueAsInt(String name) {
-        return switch (name) {
-            case "CHAR_BIT" -> 8;
-            case "byteBits" -> 8;
-            default -> 1;
-        };
+        return sizes.getOrDefault(name, 0);
     }
 
     @Override
     public long getSymbolValueAsLong(String name) {
-        return 1;
+        return sizes.getOrDefault(name, 0);
     }
 
     @Override

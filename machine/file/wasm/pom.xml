@@ -24,6 +24,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>qbicc-machine-file-object</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.qbicc</groupId>
+            <artifactId>qbicc-machine-tool-api</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
