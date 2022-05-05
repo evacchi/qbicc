@@ -21,12 +21,12 @@ public final class WasmObjectFileProvider implements ObjectFileProvider {
     public WasmObjectFileProvider() {}
 
     public ObjectFile openObjectFile(final Path path) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.command("wasm2wat", path.toString());
-        Process start = pb.start();
-        String result = new String(start.getInputStream().readAllBytes());
-
-        return new WasmObjectFile(result);
+//        ProcessBuilder pb = new ProcessBuilder();
+//        pb.command("wasm2wat", path.toString());
+//        Process start = pb.start();
+//
+//        byte[] bytes = start.getInputStream().readAllBytes();
+        return new WasmObjectFile(path);
     }
 
     public ObjectType getObjectType() {

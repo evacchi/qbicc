@@ -28,6 +28,16 @@
             <groupId>org.qbicc</groupId>
             <artifactId>qbicc-machine-tool-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.cretz.asmble</groupId>
+            <artifactId>asmble-compiler</artifactId>
+            <version>0.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.kaitai</groupId>
+            <artifactId>kaitai-struct-runtime</artifactId>
+            <version>0.9</version>
+        </dependency>
     </dependencies>
 
 </project>

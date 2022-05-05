@@ -45,10 +45,10 @@ public class TestSimpleCompile {
                 }
             }
         });
-        ib.setSource(InputSource.from("extern int foo; int foo = 0x1234;"));
+        ib.setSource(InputSource.from("extern int foo; int foo = 0x123456;"));
         ib.invoke();
         assertNotNull(objectFilePath);
         ObjectFile objectFile = of.get().openObjectFile(objectFilePath);
-        assertEquals(0x1234, objectFile.getSymbolValueAsInt("foo"));
+        assertEquals(0x123456, objectFile.getSymbolValueAsInt("foo"));
     }
 }
