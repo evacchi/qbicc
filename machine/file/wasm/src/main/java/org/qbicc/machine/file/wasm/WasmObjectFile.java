@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,13 +68,23 @@ public final class WasmObjectFile implements ObjectFile {
             if (struct instanceof Webassembly.DataSection) {
 
 
-                for (Webassembly.DataSegmentType data : ((Webassembly.DataSection) struct).entries()) {
-                    Integer idx = data.index().value();
-                    System.out.println(indexSymbol.get(idx));
+                ArrayList<Webassembly.DataSegmentType> entries = ((Webassembly.DataSection) struct).entries();
+                for (int i = 0; i < entries.size(); i++) {
+                    Webassembly.DataSegmentType data = entries.get(i);
+                    System.out.print(i);
+                    System.out.print(":::");
+                    System.out.println(indexSymbol.get(i));
+
+
+                    sizes.put(indexSymbol.get(i), data.data().get(0).byteValue());
                 }
 
             }
+
         }
+
+        System.out.println(sizes);
+
     }
 
     @Override
