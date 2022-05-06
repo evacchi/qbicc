@@ -404,6 +404,63 @@ public class Webassembly extends KaitaiStruct {
         public Webassembly _root() { return _root; }
         public KaitaiStruct _parent() { return _parent; }
     }
+    public static class SyminfoType extends KaitaiStruct {
+        public static SyminfoType fromFile(String fileName) throws IOException {
+            return new SyminfoType(new ByteBufferKaitaiStream(fileName));
+        }
+
+        public SyminfoType(KaitaiStream _io) {
+            this(_io, null, null);
+        }
+
+        public SyminfoType(KaitaiStream _io, Webassembly.SymbolTableType _parent) {
+            this(_io, _parent, null);
+        }
+
+        public SyminfoType(KaitaiStream _io, Webassembly.SymbolTableType _parent, Webassembly _root) {
+            super(_io);
+            this._parent = _parent;
+            this._root = _root;
+            _read();
+        }
+        private void _read() {
+            this.kind = this._io.readU1();
+            this.flags = new VlqBase128Le(this._io);
+            if (kind() == 1) {
+                this.nameLen = new VlqBase128Le(this._io);
+            }
+            if (kind() == 1) {
+                this.nameData = new String(this._io.readBytes(nameLen().value()), Charset.forName("UTF-8"));
+            }
+            if (kind() == 1) {
+                this.index = new VlqBase128Le(this._io);
+            }
+            if (kind() == 1) {
+                this.offset = new VlqBase128Le(this._io);
+            }
+            if (kind() == 1) {
+                this.size = new VlqBase128Le(this._io);
+            }
+        }
+        private int kind;
+        private VlqBase128Le flags;
+        private VlqBase128Le nameLen;
+        private String nameData;
+        private VlqBase128Le index;
+        private VlqBase128Le offset;
+        private VlqBase128Le size;
+        private Webassembly _root;
+        private Webassembly.SymbolTableType _parent;
+        public int kind() { return kind; }
+        public VlqBase128Le flags() { return flags; }
+        public VlqBase128Le nameLen() { return nameLen; }
+        public String nameData() { return nameData; }
+        public VlqBase128Le index() { return index; }
+        public VlqBase128Le offset() { return offset; }
+        public VlqBase128Le size() { return size; }
+        public Webassembly _root() { return _root; }
+        public Webassembly.SymbolTableType _parent() { return _parent; }
+    }
     public static class FuncType extends KaitaiStruct {
         public static FuncType fromFile(String fileName) throws IOException {
             return new FuncType(new ByteBufferKaitaiStream(fileName));
@@ -720,6 +777,80 @@ public class Webassembly extends KaitaiStruct {
         public Webassembly _root() { return _root; }
         public Webassembly.FunctionBodyType _parent() { return _parent; }
     }
+    public static class LinkingCustomType extends KaitaiStruct {
+        public static LinkingCustomType fromFile(String fileName) throws IOException {
+            return new LinkingCustomType(new ByteBufferKaitaiStream(fileName));
+        }
+
+        public LinkingCustomType(KaitaiStream _io) {
+            this(_io, null, null);
+        }
+
+        public LinkingCustomType(KaitaiStream _io, Webassembly.UnimplementedSection _parent) {
+            this(_io, _parent, null);
+        }
+
+        public LinkingCustomType(KaitaiStream _io, Webassembly.UnimplementedSection _parent, Webassembly _root) {
+            super(_io);
+            this._parent = _parent;
+            this._root = _root;
+            _read();
+        }
+        private void _read() {
+            this.version = new VlqBase128Le(this._io);
+            this.subsections = new ArrayList<LinkingCustomSubsectionType>();
+            {
+                int i = 0;
+                while (!this._io.isEof()) {
+                    this.subsections.add(new LinkingCustomSubsectionType(this._io, this, _root));
+                    i++;
+                }
+            }
+        }
+        private VlqBase128Le version;
+        private ArrayList<LinkingCustomSubsectionType> subsections;
+        private Webassembly _root;
+        private Webassembly.UnimplementedSection _parent;
+        public VlqBase128Le version() { return version; }
+        public ArrayList<LinkingCustomSubsectionType> subsections() { return subsections; }
+        public Webassembly _root() { return _root; }
+        public Webassembly.UnimplementedSection _parent() { return _parent; }
+    }
+    public static class SymbolTableType extends KaitaiStruct {
+        public static SymbolTableType fromFile(String fileName) throws IOException {
+            return new SymbolTableType(new ByteBufferKaitaiStream(fileName));
+        }
+
+        public SymbolTableType(KaitaiStream _io) {
+            this(_io, null, null);
+        }
+
+        public SymbolTableType(KaitaiStream _io, Webassembly.LinkingCustomSubsectionType _parent) {
+            this(_io, _parent, null);
+        }
+
+        public SymbolTableType(KaitaiStream _io, Webassembly.LinkingCustomSubsectionType _parent, Webassembly _root) {
+            super(_io);
+            this._parent = _parent;
+            this._root = _root;
+            _read();
+        }
+        private void _read() {
+            this.count = new VlqBase128Le(this._io);
+            infos = new ArrayList<SyminfoType>(((Number) (count().value())).intValue());
+            for (int i = 0; i < count().value(); i++) {
+                this.infos.add(new SyminfoType(this._io, this, _root));
+            }
+        }
+        private VlqBase128Le count;
+        private ArrayList<SyminfoType> infos;
+        private Webassembly _root;
+        private Webassembly.LinkingCustomSubsectionType _parent;
+        public VlqBase128Le count() { return count; }
+        public ArrayList<SyminfoType> infos() { return infos; }
+        public Webassembly _root() { return _root; }
+        public Webassembly.LinkingCustomSubsectionType _parent() { return _parent; }
+    }
     public static class GlobalSection extends KaitaiStruct {
         public static GlobalSection fromFile(String fileName) throws IOException {
             return new GlobalSection(new ByteBufferKaitaiStream(fileName));
@@ -824,6 +955,55 @@ public class Webassembly extends KaitaiStruct {
         public ArrayList<FuncType> entries() { return entries; }
         public Webassembly _root() { return _root; }
         public Webassembly.Section _parent() { return _parent; }
+    }
+    public static class LinkingCustomSubsectionType extends KaitaiStruct {
+        public static LinkingCustomSubsectionType fromFile(String fileName) throws IOException {
+            return new LinkingCustomSubsectionType(new ByteBufferKaitaiStream(fileName));
+        }
+
+        public LinkingCustomSubsectionType(KaitaiStream _io) {
+            this(_io, null, null);
+        }
+
+        public LinkingCustomSubsectionType(KaitaiStream _io, Webassembly.LinkingCustomType _parent) {
+            this(_io, _parent, null);
+        }
+
+        public LinkingCustomSubsectionType(KaitaiStream _io, Webassembly.LinkingCustomType _parent, Webassembly _root) {
+            super(_io);
+            this._parent = _parent;
+            this._root = _root;
+            _read();
+        }
+        private void _read() {
+            this.type = this._io.readU1();
+            this.payloadLen = new VlqBase128Le(this._io);
+            if (type() == 8) {
+                this._raw_symbolTable = this._io.readBytes(payloadLen().value());
+                KaitaiStream _io__raw_symbolTable = new ByteBufferKaitaiStream(_raw_symbolTable);
+                this.symbolTable = new SymbolTableType(_io__raw_symbolTable, this, _root);
+            }
+            if (type() != 8) {
+                payloadData = new ArrayList<Integer>(((Number) (payloadLen().value())).intValue());
+                for (int i = 0; i < payloadLen().value(); i++) {
+                    this.payloadData.add(this._io.readU1());
+                }
+            }
+        }
+        private int type;
+        private VlqBase128Le payloadLen;
+        private SymbolTableType symbolTable;
+        private ArrayList<Integer> payloadData;
+        private Webassembly _root;
+        private Webassembly.LinkingCustomType _parent;
+        private byte[] _raw_symbolTable;
+        public int type() { return type; }
+        public VlqBase128Le payloadLen() { return payloadLen; }
+        public SymbolTableType symbolTable() { return symbolTable; }
+        public ArrayList<Integer> payloadData() { return payloadData; }
+        public Webassembly _root() { return _root; }
+        public Webassembly.LinkingCustomType _parent() { return _parent; }
+        public byte[] _raw_symbolTable() { return _raw_symbolTable; }
     }
     public static class FunctionBodyType extends KaitaiStruct {
         public static FunctionBodyType fromFile(String fileName) throws IOException {
@@ -1239,19 +1419,33 @@ public class Webassembly extends KaitaiStruct {
         }
         private void _read() {
             this.nameLen = new VlqBase128Le(this._io);
-            this.name = this._io.readBytes(nameLen().value());
-            raw = new ArrayList<Integer>(((Number) (((_parent().header().payloadLen().value() - nameLen().value()) - 1))).intValue());
-            for (int i = 0; i < ((_parent().header().payloadLen().value() - nameLen().value()) - 1); i++) {
-                this.raw.add(this._io.readU1());
+            this.name = new String(this._io.readBytes(nameLen().value()), Charset.forName("UTF-8"));
+            if (name().equals("linking")) {
+                this.linking = new ArrayList<LinkingCustomType>();
+                {
+                    int i = 0;
+                    while (!this._io.isEof()) {
+                        this.linking.add(new LinkingCustomType(this._io, this, _root));
+                        i++;
+                    }
+                }
+            }
+            if (!(name()).equals("linking")) {
+                raw = new ArrayList<Integer>(((Number) (((_parent().header().payloadLen().value() - nameLen().value()) - nameLen().len()))).intValue());
+                for (int i = 0; i < ((_parent().header().payloadLen().value() - nameLen().value()) - nameLen().len()); i++) {
+                    this.raw.add(this._io.readU1());
+                }
             }
         }
         private VlqBase128Le nameLen;
-        private byte[] name;
+        private String name;
+        private ArrayList<LinkingCustomType> linking;
         private ArrayList<Integer> raw;
         private Webassembly _root;
         private Webassembly.Section _parent;
         public VlqBase128Le nameLen() { return nameLen; }
-        public byte[] name() { return name; }
+        public String name() { return name; }
+        public ArrayList<LinkingCustomType> linking() { return linking; }
         public ArrayList<Integer> raw() { return raw; }
         public Webassembly _root() { return _root; }
         public Webassembly.Section _parent() { return _parent; }
