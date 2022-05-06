@@ -5,6 +5,7 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +14,7 @@ import asmble.ast.Node;
 import asmble.ast.SExpr;
 import asmble.io.SExprToAst;
 import asmble.io.StrToSExpr;
+import io.kaitai.struct.KaitaiStruct;
 import kotlin.Pair;
 import org.qbicc.machine.arch.Cpu;
 import org.qbicc.machine.arch.ObjectType;
@@ -29,6 +31,49 @@ public final class WasmObjectFile implements ObjectFile {
 
     public WasmObjectFile(Path path) throws IOException {
         Webassembly webassembly = Webassembly.fromFile(path.toString());
+        HashMap<Integer, String> indexSymbol = new HashMap<>();
+        for (Webassembly.Section sect : webassembly.sections().sections()) {
+            Webassembly.SectionHeader header = sect.header();
+            KaitaiStruct struct = sect.payloadData();
+
+            if (struct instanceof Webassembly.UnimplementedSection) {
+
+
+                for (Webassembly.LinkingCustomType linkingCustomType : ((Webassembly.UnimplementedSection) struct).linking()) {
+                    for (Webassembly.LinkingCustomSubsectionType subsection : linkingCustomType.subsections()) {
+                        if (subsection.type() != 8) continue;
+
+                        for (Webassembly.SyminfoType info : subsection.symbolTable().infos()) {
+                            String name = info.nameData();
+                            Integer index = info.index().value();
+                            System.out.print(index);
+                            System.out.print("   -> ");
+                            System.out.println(name);
+                            indexSymbol.put(index, name);
+                        }
+                    }
+                }
+
+
+            }
+
+
+        }
+        for (Webassembly.Section sect : webassembly.sections().sections()) {
+            Webassembly.SectionHeader header = sect.header();
+            KaitaiStruct struct = sect.payloadData();
+
+
+            if (struct instanceof Webassembly.DataSection) {
+
+
+                for (Webassembly.DataSegmentType data : ((Webassembly.DataSection) struct).entries()) {
+                    Integer idx = data.index().value();
+                    System.out.println(indexSymbol.get(idx));
+                }
+
+            }
+        }
     }
 
     @Override
