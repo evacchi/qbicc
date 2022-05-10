@@ -42,7 +42,8 @@ public class LLVMPseudoIntrinsics {
 
         builder.ret(
             collectedPtrType,
-            builder.addrspacecast(rawPtrType, val, collectedPtrType).asLocal("ref")
+            val
+//            builder.addrspacecast(rawPtrType, val, collectedPtrType).asLocal("ref")
         );
 
         return func;
@@ -60,7 +61,8 @@ public class LLVMPseudoIntrinsics {
 
         builder.ret(
             rawPtrType,
-            builder.addrspacecast(collectedPtrType, val, rawPtrType).asLocal("ptr")
+            val
+//            builder.addrspacecast(collectedPtrType, val, rawPtrType).asLocal("ptr")
         );
 
         return func;

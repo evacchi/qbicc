@@ -101,9 +101,9 @@ final class CallImpl extends AbstractYieldingInstruction implements Call {
             target.append(cconv.toString()).append(' ');
         }
         returns.appendTo(target);
-        if (addressSpace != 0) {
-            target.append("addrspace").append('(').append(Integer.toString(addressSpace)).append(')').append(' ');
-        }
+//        if (addressSpace != 0) {
+//            target.append("addrspace").append('(').append(Integer.toString(addressSpace)).append(')').append(' ');
+//        }
         type.appendTo(target).append(' ');
         function.appendTo(target);
         target.append('(');
