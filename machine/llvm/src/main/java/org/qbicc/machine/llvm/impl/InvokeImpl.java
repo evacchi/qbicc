@@ -106,9 +106,9 @@ final class InvokeImpl extends AbstractYieldingInstruction implements Call {
             target.append(cconv.toString()).append(' ');
         }
         // todo ret attrs
-        if (addressSpace != 0) {
-            target.append("addrspace").append('(').append(Integer.toString(addressSpace)).append(')').append(' ');
-        }
+//        if (addressSpace != 0) {
+//            target.append("addrspace").append('(').append(Integer.toString(addressSpace)).append(')').append(' ');
+//        }
         returns.appendTo(target);
         type.appendTo(target).append(' ');
         function.appendTo(target);

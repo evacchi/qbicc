@@ -166,9 +166,9 @@ abstract class AbstractFunction extends AbstractMetable implements Function {
     }
 
     protected final void appendAddressSpace(final Appendable target) throws IOException {
-        if (addressSpace != 0) {
-            target.append(" addrspace(").append(Integer.toString(addressSpace)).append(')');
-        }
+//        if (addressSpace != 0) {
+//            target.append(" addrspace(").append(Integer.toString(addressSpace)).append(')');
+//        }
     }
 
     protected final void appendFunctionAttributes(final Appendable target) throws IOException {
