@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Disabled;
 import org.qbicc.machine.arch.Platform;
 import org.qbicc.machine.object.ObjectFile;
 import org.qbicc.machine.object.ObjectFileProvider;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestSimpleCompile {
     @Test
+    @Disabled
     public void testSimpleCompile() throws Exception {
         final Path objectFilePath = Files.createTempFile("temp", ".o");
         Platform plaf = Platform.parse("wasm-wasm-wasi");

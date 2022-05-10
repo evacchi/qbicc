@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.qbicc.machine.arch.ObjectType;
 import org.qbicc.machine.arch.Platform;
 import org.qbicc.machine.object.ObjectFileProvider;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 /**
  *
  */
+@Disabled
 public class TestProbes {
 
     static CToolChain compiler;
