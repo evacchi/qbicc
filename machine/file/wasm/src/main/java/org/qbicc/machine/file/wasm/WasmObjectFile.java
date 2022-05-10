@@ -28,7 +28,7 @@ import org.qbicc.machine.object.Section;
 public final class WasmObjectFile implements ObjectFile {
 
     private static final Pattern DATA = Pattern.compile("^\s*\\(data \\$([a-w0-9_]+) \\(i32.*\\) \"(.*)\"\\).*");
-    Map<String, Byte> sizes = new HashMap<>();
+    Map<String, Integer> sizes = new HashMap<>();
 
     public WasmObjectFile(Path path) throws IOException {
         Webassembly webassembly = Webassembly.fromFile(path.toString());
@@ -76,7 +76,7 @@ public final class WasmObjectFile implements ObjectFile {
                     System.out.println(indexSymbol.get(i));
 
 
-                    sizes.put(indexSymbol.get(i), data.data().get(0).byteValue());
+                    sizes.put(indexSymbol.get(i), data.data().get(0));
                 }
 
             }
@@ -104,7 +104,7 @@ public final class WasmObjectFile implements ObjectFile {
 
     @Override
     public byte[] getSymbolAsBytes(String name, int size) {
-        return new byte[] { getSize(name) };
+        return new byte[] { getSize(name).byteValue() };
     }
 
     @Override
@@ -112,8 +112,8 @@ public final class WasmObjectFile implements ObjectFile {
         return new String(getSymbolAsBytes(name, nbytes), StandardCharsets.UTF_8);
     }
 
-    private Byte getSize(String name) {
-        return sizes.getOrDefault(name, (byte) 1);
+    private Integer getSize(String name) {
+        return sizes.getOrDefault(name, 0);
     }
 
     @Override
