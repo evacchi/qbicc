@@ -118,7 +118,7 @@ public class LLVMCompiler {
         }
         LlcInvoker llcInvoker = llvmToolChain.newLlcInvoker();
         llcInvoker.setMessageHandler(ToolMessageHandler.reporting(context));
-        llcInvoker.setOutputFormat(OutputFormat.ASM);
+        llcInvoker.setOutputFormat(OutputFormat.OBJ);
         llcInvoker.setRelocationModel(isPie ? RelocationModel.Pic : RelocationModel.Static);
         return llcInvoker;
     }
