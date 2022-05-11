@@ -38,15 +38,22 @@ public final class WasmObjectFile implements ObjectFile {
             KaitaiStruct struct = sect.payloadData();
 
             if (struct instanceof Webassembly.UnimplementedSection) {
+                List<Webassembly.LinkingCustomType> linking = ((Webassembly.UnimplementedSection) struct).linking();
+                if (linking == null) continue;
 
-
-                for (Webassembly.LinkingCustomType linkingCustomType : ((Webassembly.UnimplementedSection) struct).linking()) {
+                for (Webassembly.LinkingCustomType linkingCustomType : linking) {
                     for (Webassembly.LinkingCustomSubsectionType subsection : linkingCustomType.subsections()) {
                         if (subsection.type() != 8) continue;
 
                         for (Webassembly.SyminfoType info : subsection.symbolTable().infos()) {
+                            if (info.kind()!=1) continue;
                             String name = info.nameData();
-                            Integer index = info.index().value();
+                            VlqBase128Le idx = info.index();
+                            if (idx == null) {
+                                System.out.printf("%s IS NULL", name);
+                                continue;
+                            }
+                            Integer index = idx.value();
                             System.out.print(index);
                             System.out.print("   -> ");
                             System.out.println(name);
@@ -148,7 +155,7 @@ public final class WasmObjectFile implements ObjectFile {
 
     @Override
     public String getStackMapSectionName() {
-        return null;
+        return "__llvm_stackmaps";
     }
 
     @Override

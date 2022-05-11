@@ -126,6 +126,10 @@ public class MethodDataEmitter implements Consumer<CompilationContext> {
     }
 
     public MethodData createMethodData(CompilationContext ctxt) {
+        return new MethodData(0);
+    }
+
+    public MethodData _createMethodData(CompilationContext ctxt) {
         List<StackMapRecord> stackMapRecords = new StackMapRecordCollector(ctxt).collect();
         CallSiteInfo callSiteInfo = ctxt.getAttachment(CallSiteInfo.KEY);
         MethodData methodData = new MethodData(stackMapRecords.size());

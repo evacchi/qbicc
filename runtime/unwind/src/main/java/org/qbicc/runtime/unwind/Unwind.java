@@ -62,7 +62,9 @@ public final class Unwind {
         } else if (Build.Target.isI386()) {
             SP = word(4); // esp
         } else {
-            throw new IllegalStateException("Unsupported architecture");
+            // wasm
+            SP = word(4); // esp
+            //throw new IllegalStateException("Unsupported architecture");
         }
     }
 
