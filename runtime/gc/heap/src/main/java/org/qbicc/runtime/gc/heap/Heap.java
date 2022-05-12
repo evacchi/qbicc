@@ -241,12 +241,12 @@ public final class Heap {
     }
 
     // Compatibility (temporary until class libs release)
-    @constructor(priority = 0)
-    @export
-    @Deprecated
-    static void ctor(c_int argc, char_ptr_ptr argv) {
-        initHeap(argc.intValue(), argv);
-    }
+//    @constructor(priority = 0)
+//    @export
+//    @Deprecated
+//    static void ctor(c_int argc, char_ptr_ptr argv) {
+//        initHeap(argc.intValue(), argv);
+//    }
 
     @export
     public static boolean initHeap(int argc, char_ptr_ptr argv) {
