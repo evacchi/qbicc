@@ -90,7 +90,7 @@ public final class WasmObjectFile implements ObjectFile {
 
         }
 
-        System.out.println(sizes);
+//        System.out.println(sizes);
 
     }
 
