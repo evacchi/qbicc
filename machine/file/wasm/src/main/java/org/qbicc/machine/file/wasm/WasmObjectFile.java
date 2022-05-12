@@ -50,13 +50,13 @@ public final class WasmObjectFile implements ObjectFile {
                             String name = info.nameData();
                             VlqBase128Le idx = info.index();
                             if (idx == null) {
-                                System.out.printf("%s IS NULL", name);
+//                                System.out.printf("%s IS NULL", name);
                                 continue;
                             }
                             Integer index = idx.value();
-                            System.out.print(index);
-                            System.out.print("   -> ");
-                            System.out.println(name);
+//                            System.out.print(index);
+//                            System.out.print("   -> ");
+//                            System.out.println(name);
                             indexSymbol.put(index, name);
                         }
                     }
@@ -78,9 +78,9 @@ public final class WasmObjectFile implements ObjectFile {
                 ArrayList<Webassembly.DataSegmentType> entries = ((Webassembly.DataSection) struct).entries();
                 for (int i = 0; i < entries.size(); i++) {
                     Webassembly.DataSegmentType data = entries.get(i);
-                    System.out.print(i);
-                    System.out.print(":::");
-                    System.out.println(indexSymbol.get(i));
+//                    System.out.print(i);
+//                    System.out.print(":::");
+//                    System.out.println(indexSymbol.get(i));
 
 
                     sizes.put(indexSymbol.get(i), data.data().get(0));
