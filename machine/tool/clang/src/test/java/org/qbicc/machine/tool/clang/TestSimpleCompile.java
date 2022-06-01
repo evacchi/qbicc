@@ -9,6 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.qbicc.machine.arch.Platform;
 import org.qbicc.machine.object.ObjectFile;
 import org.qbicc.machine.object.ObjectFileProvider;
@@ -23,10 +28,22 @@ import org.junit.jupiter.api.Test;
  *
  */
 public class TestSimpleCompile {
-    @Test
-    public void testSimpleCompile() throws Exception {
+    enum TestPlatforms {
+
+        HOST(Platform.HOST_PLATFORM),
+        WASM(Platform.parse("wasm32-wasi"));
+
+        final Platform platform;
+
+        TestPlatforms(Platform platform) {
+            this.platform = platform;
+        }
+    }
+    @ParameterizedTest
+    @EnumSource(TestPlatforms.class)
+    public void testSimpleCompile(TestPlatforms platform) throws Exception {
+        Platform plaf = platform.platform;
         final Path objectFilePath = Files.createTempFile("temp", ".o");
-        Platform plaf = Platform.HOST_PLATFORM;
         Optional<ObjectFileProvider> of = ObjectFileProvider.findProvider(plaf.getObjectType(), getClass().getClassLoader());
         assumeTrue(of.isPresent());
         Path clang = ToolUtil.findExecutable("clang");
