@@ -159,6 +159,13 @@ public final class Build {
         }
 
         @Fold
+        public static boolean isWasi() {
+                return defined(__wasi__);
+
+        }
+
+
+        @Fold
         public static boolean isAix() {
             return defined(_AIX);
         }
@@ -183,6 +190,11 @@ public final class Build {
         @Fold
         public static boolean isArm() {
             return defined(__GNUC__) && defined(__arm__) || defined(MSVC) && defined(_M_ARM);
+        }
+
+        @Fold
+        public static boolean isWasm32() {
+            return defined(__wasm32__);
         }
 
         @Fold
@@ -260,6 +272,10 @@ public final class Build {
         private static final object __arm__ = constant();
         private static final object __aarch64__ = constant();
         private static final object _M_ARM = constant();
+        private static final object __wasm32__ = constant();
+        private static final object __wasi__ = constant();
+        private static final object __EMSCRIPTEN__ = constant();
+
         @include("<features.h>")
         private static final c_int __GNU_LIBRARY__ = constant();
         @include("<features.h>")
@@ -306,6 +322,12 @@ public final class Build {
             }
         }
 
+        public static final class IsWasm32 implements BooleanSupplier {
+            public boolean getAsBoolean() {
+                return isWasm32();
+            }
+        }
+
         //
 
         public static final class IsGcc implements BooleanSupplier {
@@ -331,6 +353,13 @@ public final class Build {
                 return isUnix();
             }
         }
+
+        public static final class IsWasi implements BooleanSupplier {
+            public boolean getAsBoolean() {
+                return isWasi();
+            }
+        }
+
 
         public static final class IsAix implements BooleanSupplier {
             public boolean getAsBoolean() {
