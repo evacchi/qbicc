@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import org.jboss.logging.Logger;
 import org.qbicc.context.DiagnosticContext;
 import org.qbicc.driver.GraphGenConfig;
+import org.qbicc.machine.arch.Platform;
 import org.qbicc.main.ClassPathEntry;
 import org.qbicc.main.Main;
 
@@ -15,6 +16,7 @@ public class Qbicc {
             .setDiagnosticsHandler(new QbiccDiagnosticLogger(logger))
             .setGraphGenConfig(new GraphGenConfig())
             .setMainClass(mainClass)
+            .setPlatform(Platform.parse("wasm-wasi"))
             .build()
             .call();
     }
