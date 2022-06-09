@@ -1215,19 +1215,19 @@ public class Webassembly extends KaitaiStruct {
             _read();
         }
         private void _read() {
-            this.count = this._io.readU1();
-            if (count() > 0) {
-                entries = new ArrayList<ImportEntry>(((Number) (count())).intValue());
-                for (int i = 0; i < count(); i++) {
+            this.count = new VlqBase128Le(this._io);
+            if (count().value() > 0) {
+                entries = new ArrayList<ImportEntry>(((Number) (count().value())).intValue());
+                for (int i = 0; i < count().value(); i++) {
                     this.entries.add(new ImportEntry(this._io, this, _root));
                 }
             }
         }
-        private int count;
+        private VlqBase128Le count;
         private ArrayList<ImportEntry> entries;
         private Webassembly _root;
         private Webassembly.Section _parent;
-        public int count() { return count; }
+        public VlqBase128Le count() { return count; }
         public ArrayList<ImportEntry> entries() { return entries; }
         public Webassembly _root() { return _root; }
         public Webassembly.Section _parent() { return _parent; }
