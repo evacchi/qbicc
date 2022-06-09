@@ -482,9 +482,15 @@ public class Webassembly extends KaitaiStruct {
         private void _read() {
             this.nameLen = new VlqBase128Le(this._io);
             this.nameData = new String(this._io.readBytes(nameLen().value()), Charset.forName("UTF-8"));
-            this.index = new VlqBase128Le(this._io);
-            this.offset = new VlqBase128Le(this._io);
-            this.size = new VlqBase128Le(this._io);
+            if ((_parent().flags().value() & Webassembly.Symflag.UNDEFINED.id()) == 0) {
+                this.index = new VlqBase128Le(this._io);
+            }
+            if ((_parent().flags().value() & Webassembly.Symflag.UNDEFINED.id()) == 0) {
+                this.offset = new VlqBase128Le(this._io);
+            }
+            if ((_parent().flags().value() & Webassembly.Symflag.UNDEFINED.id()) == 0) {
+                this.size = new VlqBase128Le(this._io);
+            }
         }
         private VlqBase128Le nameLen;
         private String nameData;

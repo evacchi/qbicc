@@ -9,6 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WebassemblyTest {
 
     @Test
+    void probe() throws IOException {
+        String f = "/Users/evacchi/Devel/rh/fun/qbicc/machine/file/wasm/src/test/resources/probe.wasm";
+        Webassembly webassembly = Webassembly.fromFile(f);
+    }
+
+    @Test
     void linkingSect1() throws IOException {
         String f = "/Users/evacchi/Devel/rh/fun/qbicc/machine/file/wasm/src/test/resources/CalendarDataProvider.o";
         Webassembly webassembly = Webassembly.fromFile(f);
