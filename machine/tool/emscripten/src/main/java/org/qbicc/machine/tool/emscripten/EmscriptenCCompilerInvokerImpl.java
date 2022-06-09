@@ -79,7 +79,6 @@ final class EmscriptenCCompilerInvokerImpl extends AbstractEmscriptenInvoker imp
     }
 
     void addArguments(final List<String> cmd) {
-        // ignore target, it is implied
         Platform platform = getTool().getPlatform();
         cmd.add("--target="+platform.getCpu().toString() + "-" + platform.getOs().toString() + "-" + platform.getAbi().toString());
         if (sourceLanguage == SourceLanguage.C) {
@@ -99,7 +98,15 @@ final class EmscriptenCCompilerInvokerImpl extends AbstractEmscriptenInvoker imp
                 cmd.add("-D" + key + "=" + val);
             }
         }
-        Collections.addAll(cmd, "-c", "-x", sourceLanguage == SourceLanguage.ASM ? "assembler" : "c", "-o", getOutputPath().toString(), "-");
+        Collections.addAll(cmd, "-Wno-override-module", "-c", "-x", sourceLanguageArg(), "-o", getOutputPath().toString(), "-");
+    }
+
+    private String sourceLanguageArg() {
+        return switch (sourceLanguage) {
+            case ASM -> "assembler";
+            case IR -> "ir";
+            default -> "c";
+        };
     }
 }
 
