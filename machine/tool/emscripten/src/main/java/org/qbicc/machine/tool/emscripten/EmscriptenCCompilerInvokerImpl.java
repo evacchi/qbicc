@@ -98,7 +98,7 @@ final class EmscriptenCCompilerInvokerImpl extends AbstractEmscriptenInvoker imp
                 cmd.add("-D" + key + "=" + val);
             }
         }
-        Collections.addAll(cmd, "-Wno-override-module", "-c", "-x", sourceLanguageArg(), "-o", getOutputPath().toString(), "-");
+        Collections.addAll(cmd, "-s", "USE_ZLIB", "-Wno-override-module", "-c", "-x", sourceLanguageArg(), "-o", getOutputPath().toString(), "-");
     }
 
     private String sourceLanguageArg() {
