@@ -30,7 +30,7 @@ public interface LlvmToolChain extends Tool {
     OptInvoker newOptInvoker();
 
     static Iterable<LlvmToolChain> findAllLlvmToolChains(Platform platform, Predicate<? super LlvmToolChain> filter, ClassLoader classLoader) {
-        Path llcPath = ToolUtil.findExecutable("llc");
+        Path llcPath = ToolUtil.findExecutable("llc", List.of(Path.of("/usr/local/Cellar/emscripten/3.1.13/libexec/llvm/bin/")));
         if (llcPath != null) {
             Path optPath = ToolUtil.findExecutable("opt");
             if (optPath != null) {

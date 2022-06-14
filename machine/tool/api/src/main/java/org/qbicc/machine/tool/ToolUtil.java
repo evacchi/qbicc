@@ -44,9 +44,10 @@ public final class ToolUtil {
     }
 
     public static Path findExecutable(String name, List<Path> extraPaths) {
-        Path found = findExecutableOnPath(name, OS_PATH);
+        Path found;
+        found = findExecutableOnPath(name, extraPaths);
         if (found == null) {
-            found = findExecutableOnPath(name, extraPaths);
+            found = findExecutableOnPath(name, OS_PATH);
         }
         return found;
     }
