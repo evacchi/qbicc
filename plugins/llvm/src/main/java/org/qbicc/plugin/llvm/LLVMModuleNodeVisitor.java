@@ -124,7 +124,7 @@ final class LLVMModuleNodeVisitor implements ValueVisitor<Void, LLValue>, Pointe
             // References can be used as different types in the IL without manually casting them, so we need to
             // represent all reference types as being the same LLVM type. We will cast to and from the actual type we
             // use the reference as when needed.
-            res = ptrTo(i8, 1);
+            res = ptrTo(i8, 0);
         } else if (type instanceof WordType) {
             // all other words are integers
             // LLVM doesn't really care about signedness
@@ -246,9 +246,9 @@ final class LLVMModuleNodeVisitor implements ValueVisitor<Void, LLValue>, Pointe
         } else if (inputType instanceof PointerType && outputType instanceof IntegerType) {
             return Values.ptrtointConstant(input, fromType, toType);
         } else if (inputType instanceof ReferenceType && outputType instanceof PointerType) {
-            return Values.addrspacecastConstant(input, fromType, toType);
+            return Values.bitcastConstant(input, fromType, toType);
         } else if (inputType instanceof PointerType && outputType instanceof ReferenceType) {
-            return Values.addrspacecastConstant(input, fromType, toType);
+            return Values.bitcastConstant(input, fromType, toType);
         }
         // todo: add signed/unsigned int <-> fp
         return visitUnknown(param, node);
