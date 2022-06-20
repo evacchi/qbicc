@@ -25,7 +25,6 @@ import org.qbicc.object.FunctionDeclaration;
 import org.qbicc.object.GlobalXtor;
 import org.qbicc.object.ModuleSection;
 import org.qbicc.object.ProgramModule;
-import org.qbicc.object.ProgramObject;
 import org.qbicc.object.SectionObject;
 import org.qbicc.object.ThreadLocalMode;
 import org.qbicc.type.ArrayType;
@@ -55,11 +54,13 @@ final class LLVMModuleGenerator {
     private final CompilationContext context;
     private final int picLevel;
     private final int pieLevel;
+    private final int referenceAddressSpace;
 
-    LLVMModuleGenerator(final CompilationContext context, final int picLevel, final int pieLevel) {
+    LLVMModuleGenerator(final CompilationContext context, final int picLevel, final int pieLevel, final int referenceAddressSpace) {
         this.context = context;
         this.picLevel = picLevel;
         this.pieLevel = pieLevel;
+        this.referenceAddressSpace = referenceAddressSpace;
     }
 
     public Path processProgramModule(final ProgramModule programModule) {
@@ -80,9 +81,9 @@ final class LLVMModuleGenerator {
             .float32Align(ts.getFloat32Type().getAlign() * 8)
             .float64Align(ts.getFloat64Type().getAlign() * 8)
             ;
-        final LLVMModuleNodeVisitor moduleVisitor = new LLVMModuleNodeVisitor(module, context);
+        final LLVMModuleNodeVisitor moduleVisitor = new LLVMModuleNodeVisitor(module, context, this.referenceAddressSpace);
         final LLVMModuleDebugInfo debugInfo = new LLVMModuleDebugInfo(programModule, module, context);
-        final LLVMPseudoIntrinsics pseudoIntrinsics = new LLVMPseudoIntrinsics(module);
+        final LLVMPseudoIntrinsics pseudoIntrinsics = LLVMPseudoIntrinsics.forReferenceAddressSpace(module, this.referenceAddressSpace);
 
         if (picLevel != 0) {
             module.addFlag(ModuleFlagBehavior.Max, "PIC Level", Types.i32, Values.intConstant(picLevel));

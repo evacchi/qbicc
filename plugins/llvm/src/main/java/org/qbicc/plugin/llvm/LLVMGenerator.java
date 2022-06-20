@@ -16,14 +16,16 @@ import org.qbicc.object.ProgramModule;
 public class LLVMGenerator implements Consumer<CompilationContext>, ValueVisitor<CompilationContext, LLValue> {
     private final int picLevel;
     private final int pieLevel;
+    private int referenceAddressSpace;
 
-    public LLVMGenerator(final int picLevel, final int pieLevel) {
+    public LLVMGenerator(final int picLevel, final int pieLevel, final int referenceAddressSpace) {
         this.picLevel = picLevel;
         this.pieLevel = pieLevel;
+        this.referenceAddressSpace = referenceAddressSpace;
     }
 
     public void accept(final CompilationContext compilationContext) {
-        LLVMModuleGenerator generator = new LLVMModuleGenerator(compilationContext, picLevel, pieLevel);
+        LLVMModuleGenerator generator = new LLVMModuleGenerator(compilationContext, picLevel, pieLevel, referenceAddressSpace);
         List<ProgramModule> allProgramModules = compilationContext.getAllProgramModules();
         Iterator<ProgramModule> iterator = allProgramModules.iterator();
         compilationContext.runParallelTask(ctxt -> {
