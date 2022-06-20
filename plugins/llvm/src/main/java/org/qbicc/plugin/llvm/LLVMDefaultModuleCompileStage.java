@@ -9,17 +9,17 @@ import java.util.function.Consumer;
 public class LLVMDefaultModuleCompileStage implements Consumer<CompilationContext> {
     private final boolean isPie;
     private final boolean compileOutput;
-    private final int referenceAddressSpace;
+    private final LLVMReferencePointerFactory refFactory;
 
-    public LLVMDefaultModuleCompileStage(boolean isPie, boolean compileOutput, int referenceAddressSpace) {
+    public LLVMDefaultModuleCompileStage(boolean isPie, boolean compileOutput, LLVMReferencePointerFactory refFactory) {
         this.isPie = isPie;
         this.compileOutput = compileOutput;
-        this.referenceAddressSpace = referenceAddressSpace;
+        this.refFactory = refFactory;
     }
 
     @Override
     public void accept(CompilationContext context) {
-        LLVMModuleGenerator generator = new LLVMModuleGenerator(context, isPie ? 2 : 0, isPie ? 2 : 0, referenceAddressSpace);
+        LLVMModuleGenerator generator = new LLVMModuleGenerator(context, isPie ? 2 : 0, isPie ? 2 : 0, refFactory);
         DefinedTypeDefinition defaultTypeDefinition = context.getDefaultTypeDefinition();
         Path modulePath = generator.processProgramModule(context.getOrAddProgramModule(defaultTypeDefinition));
         if (compileOutput) {

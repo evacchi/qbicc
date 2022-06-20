@@ -1,5 +1,7 @@
 package org.qbicc.plugin.llvm;
 
+import java.util.List;
+
 import org.qbicc.machine.llvm.FunctionAttributes;
 import org.qbicc.machine.llvm.FunctionDefinition;
 import org.qbicc.machine.llvm.LLBasicBlock;
@@ -9,48 +11,10 @@ import org.qbicc.machine.llvm.Linkage;
 import org.qbicc.machine.llvm.Module;
 import org.qbicc.machine.llvm.Types;
 
-import java.util.List;
-
-public abstract class LLVMPseudoIntrinsics {
-
-    public static LLVMPseudoIntrinsics forReferenceAddressSpace(Module module, int referenceAddressSpace) {
-        LLValue rawPtrType = Types.ptrTo(Types.i8, 0);
-        if (referenceAddressSpace == 0) {
-            return new LLVMPseudoIntrinsics(module, rawPtrType, rawPtrType) {
-                @Override
-                protected void buildCastPtrToRef(LLBuilder builder, LLValue val) {
-                    builder.ret(rawPtrType, val);
-                }
-
-                @Override
-                protected void buildCastRefToPtr(LLBuilder builder, LLValue val) {
-                    builder.ret(rawPtrType, val);
-                }
-            };
-        } else {
-            LLValue collectedPtrType = Types.ptrTo(Types.i8, 1);
-            return new LLVMPseudoIntrinsics(module, rawPtrType, collectedPtrType) {
-                @Override
-                protected void buildCastPtrToRef(LLBuilder builder, LLValue val) {
-                    builder.ret(
-                        collectedPtrType,
-                        builder.addrspacecast(rawPtrType, val, collectedPtrType).asLocal("ref")
-                    );
-                }
-
-                @Override
-                protected void buildCastRefToPtr(LLBuilder builder, LLValue val) {
-                    builder.ret(
-                        rawPtrType,
-                        builder.addrspacecast(collectedPtrType, val, rawPtrType).asLocal("ptr")
-                    );
-                }
-            };
-        }
-    }
-
+public class LLVMPseudoIntrinsics {
 
     private final Module module;
+    private LLVMReferencePointerFactory refFactory;
 
     private final LLValue rawPtrType;
     private final LLValue collectedPtrType;
@@ -61,11 +25,12 @@ public abstract class LLVMPseudoIntrinsics {
     private LLValue castRefToPtr;
     private LLValue castRefToPtrType;
 
-    private LLVMPseudoIntrinsics(Module module, LLValue rawPtrType, LLValue collectedPtrType) {
+    public LLVMPseudoIntrinsics(Module module, LLVMReferencePointerFactory refFactory) {
         this.module = module;
+        this.refFactory = refFactory;
 
-        this.rawPtrType = rawPtrType;
-        this.collectedPtrType = collectedPtrType;
+        this.rawPtrType = refFactory.makeRawPointer();
+        this.collectedPtrType = refFactory.makeReferencePointer();
     }
 
     private FunctionDefinition createCastPtrToRef() {
@@ -78,26 +43,9 @@ public abstract class LLVMPseudoIntrinsics {
         func.attribute(FunctionAttributes.alwaysinline).attribute(FunctionAttributes.gcLeafFunction);
         LLValue val = func.param(rawPtrType).name("ptr").asValue();
 
-        buildCastPtrToRef(builder, val);
+        refFactory.buildCastPtrToRef(builder, val);
 
         return func;
-    }
-
-
-    protected abstract void buildCastPtrToRef(LLBuilder builder, LLValue val);
-
-    protected void _buildCastPtrToRef(LLBuilder builder, LLValue val) {
-        if (rawPtrType.equals(collectedPtrType)) {
-            builder.ret(
-                collectedPtrType,
-                val
-            );
-        } else {
-            builder.ret(
-                collectedPtrType,
-                builder.addrspacecast(rawPtrType, val, collectedPtrType).asLocal("ref")
-            );
-        }
     }
 
     private FunctionDefinition createCastRefToPtr() {
@@ -110,25 +58,9 @@ public abstract class LLVMPseudoIntrinsics {
         func.attribute(FunctionAttributes.alwaysinline).attribute(FunctionAttributes.gcLeafFunction);
         LLValue val = func.param(collectedPtrType).name("ref").asValue();
 
-        buildCastRefToPtr(builder, val);
+        refFactory.buildCastRefToPtr(builder, val);
 
         return func;
-    }
-
-    protected abstract void buildCastRefToPtr(LLBuilder builder, LLValue val);
-
-    protected void _buildCastRefToPtr(LLBuilder builder, LLValue val) {
-        if (rawPtrType.equals(collectedPtrType)) {
-            builder.ret(
-                rawPtrType,
-                val
-            );
-        } else {
-            builder.ret(
-                rawPtrType,
-                builder.addrspacecast(collectedPtrType, val, rawPtrType).asLocal("ptr")
-            );
-        }
     }
 
     private void ensureCastPtrToRef() {

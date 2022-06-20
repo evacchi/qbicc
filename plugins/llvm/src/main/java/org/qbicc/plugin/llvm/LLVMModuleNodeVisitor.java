@@ -68,20 +68,16 @@ final class LLVMModuleNodeVisitor implements ValueVisitor<Void, LLValue>, Pointe
     final AtomicInteger anonCnt = new AtomicInteger();
     final Module module;
     final CompilationContext ctxt;
+    private LLVMReferencePointerFactory refFactory;
 
     final Map<Type, LLValue> types = new HashMap<>();
     final Map<CompoundType, Map<CompoundType.Member, LLValue>> structureOffsets = new HashMap<>();
     final Map<Value, LLValue> globalValues = new HashMap<>();
-    final int referenceAddressSpace;
 
-    LLVMModuleNodeVisitor(final Module module, final CompilationContext ctxt, int referenceAddressSpace) {
+    LLVMModuleNodeVisitor(final Module module, final CompilationContext ctxt, LLVMReferencePointerFactory refFactory) {
         this.module = module;
         this.ctxt = ctxt;
-        this.referenceAddressSpace = referenceAddressSpace;
-    }
-
-    boolean isReferenceDefaultAddressSpace() {
-        return referenceAddressSpace == 0;
+        this.refFactory = refFactory;
     }
 
     LLValue map(Type type) {
@@ -130,7 +126,7 @@ final class LLVMModuleNodeVisitor implements ValueVisitor<Void, LLValue>, Pointe
             // References can be used as different types in the IL without manually casting them, so we need to
             // represent all reference types as being the same LLVM type. We will cast to and from the actual type we
             // use the reference as when needed.
-            res = ptrTo(i8, this.referenceAddressSpace);
+            res = refFactory.makeReferencePointer();
         } else if (type instanceof WordType) {
             // all other words are integers
             // LLVM doesn't really care about signedness
@@ -252,17 +248,9 @@ final class LLVMModuleNodeVisitor implements ValueVisitor<Void, LLValue>, Pointe
         } else if (inputType instanceof PointerType && outputType instanceof IntegerType) {
             return Values.ptrtointConstant(input, fromType, toType);
         } else if (inputType instanceof ReferenceType && outputType instanceof PointerType) {
-            if (isReferenceDefaultAddressSpace()) {
-                return Values.bitcastConstant(input, fromType, toType);
-            } else {
-                return Values.addrspacecastConstant(input, fromType, toType);
-            }
+            return refFactory.cast(input, fromType, toType);
         } else if (inputType instanceof PointerType && outputType instanceof ReferenceType) {
-            if (isReferenceDefaultAddressSpace()) {
-                return Values.bitcastConstant(input, fromType, toType);
-            } else {
-                return Values.addrspacecastConstant(input, fromType, toType);
-            }
+            return refFactory.cast(input, fromType, toType);
         }
         // todo: add signed/unsigned int <-> fp
         return visitUnknown(param, node);

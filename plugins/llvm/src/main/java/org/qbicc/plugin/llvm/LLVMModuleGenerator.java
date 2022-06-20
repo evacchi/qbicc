@@ -54,13 +54,13 @@ final class LLVMModuleGenerator {
     private final CompilationContext context;
     private final int picLevel;
     private final int pieLevel;
-    private final int referenceAddressSpace;
+    private final LLVMReferencePointerFactory refFactory;
 
-    LLVMModuleGenerator(final CompilationContext context, final int picLevel, final int pieLevel, final int referenceAddressSpace) {
+    LLVMModuleGenerator(final CompilationContext context, final int picLevel, final int pieLevel, final LLVMReferencePointerFactory refFactory) {
         this.context = context;
         this.picLevel = picLevel;
         this.pieLevel = pieLevel;
-        this.referenceAddressSpace = referenceAddressSpace;
+        this.refFactory = refFactory;
     }
 
     public Path processProgramModule(final ProgramModule programModule) {
@@ -81,9 +81,9 @@ final class LLVMModuleGenerator {
             .float32Align(ts.getFloat32Type().getAlign() * 8)
             .float64Align(ts.getFloat64Type().getAlign() * 8)
             ;
-        final LLVMModuleNodeVisitor moduleVisitor = new LLVMModuleNodeVisitor(module, context, this.referenceAddressSpace);
+        final LLVMModuleNodeVisitor moduleVisitor = new LLVMModuleNodeVisitor(module, context, refFactory);
         final LLVMModuleDebugInfo debugInfo = new LLVMModuleDebugInfo(programModule, module, context);
-        final LLVMPseudoIntrinsics pseudoIntrinsics = LLVMPseudoIntrinsics.forReferenceAddressSpace(module, this.referenceAddressSpace);
+        final LLVMPseudoIntrinsics pseudoIntrinsics = new LLVMPseudoIntrinsics(module, refFactory);
 
         if (picLevel != 0) {
             module.addFlag(ModuleFlagBehavior.Max, "PIC Level", Types.i32, Values.intConstant(picLevel));
