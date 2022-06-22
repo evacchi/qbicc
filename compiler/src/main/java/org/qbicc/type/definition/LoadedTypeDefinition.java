@@ -3,6 +3,7 @@ package org.qbicc.type.definition;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import org.qbicc.context.ClassContext;
 import org.qbicc.graph.Value;
 import org.qbicc.interpreter.VmClass;
 import org.qbicc.type.ClassObjectType;
@@ -30,7 +31,11 @@ public interface LoadedTypeDefinition extends DefinedTypeDefinition {
     ValueType getType();
 
     default <T extends ValueType> T getType(Class<T> expected) {
-        return expected.cast(getType());
+        try {
+            return expected.cast(getType());
+        } catch (ClassCastException e) {
+            throw e;
+        }
     }
 
     default ObjectType getObjectType() {
