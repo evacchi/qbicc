@@ -78,6 +78,7 @@
                         </goals>
                         <configuration>
                             <mainClass>org.qbicc.tests.TestRunner</mainClass>
+                            <platform>wasm-wasi</platform>
                         </configuration>
                     </execution>
                 </executions>
