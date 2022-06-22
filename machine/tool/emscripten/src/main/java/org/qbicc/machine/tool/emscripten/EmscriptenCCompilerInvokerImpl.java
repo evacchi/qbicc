@@ -104,7 +104,12 @@ final class EmscriptenCCompilerInvokerImpl extends AbstractEmscriptenInvoker imp
             "-Wno-override-module",
             "-matomics",
             "-mbulk-memory",
-            "-c", "-x", sourceLanguageArg(), "-o", getOutputPath().toString(), "-");
+//            "-fwasm-exceptions",
+            "-s",
+            "ALLOW_MEMORY_GROWTH=1",
+            "-s", "EXIT_RUNTIME=1",
+
+        "-c", "-x", sourceLanguageArg(), "-o", getOutputPath().toString(), "-");
     }
 
     private String sourceLanguageArg() {
