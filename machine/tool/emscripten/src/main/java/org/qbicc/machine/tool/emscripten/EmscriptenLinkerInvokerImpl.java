@@ -84,6 +84,7 @@ final class EmscriptenLinkerInvokerImpl extends AbstractEmscriptenInvoker implem
             cmd.add("-L" + libraryPath.toString());
         }
         for (String library : libraries) {
+            if (library.equals("gcc_s") || library.equals("unwind")) continue;
             cmd.add("-l" + library);
         }
         for (Path objectFile : objectFiles) {
