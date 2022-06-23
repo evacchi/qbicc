@@ -102,7 +102,7 @@ final class EmscriptenCCompilerInvokerImpl extends AbstractEmscriptenInvoker imp
         }
         Collections.addAll(cmd, "-s", "USE_ZLIB",
             "-Wno-override-module",
-            "-matomics",
+//            "-matomics",
             "-mbulk-memory",
 //            "-fwasm-exceptions",
             "-s",

@@ -97,6 +97,7 @@ final class EmscriptenLinkerInvokerImpl extends AbstractEmscriptenInvoker implem
         cmd.add("-s");
         cmd.add("EXIT_RUNTIME=1");
         cmd.add("-fwasm-exceptions");
+        cmd.add("-fbulk-memory");
         cmd.add("-o");
         cmd.add(outputPath.toString());
     }
