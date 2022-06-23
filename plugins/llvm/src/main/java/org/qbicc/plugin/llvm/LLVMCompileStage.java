@@ -9,9 +9,12 @@ import org.qbicc.context.CompilationContext;
 import org.qbicc.type.definition.LoadedTypeDefinition;
 
 public class LLVMCompileStage implements Consumer<CompilationContext> {
+
+    private final LLVMCompiler.Factory compilerFactory;
     private final boolean isPie;
 
-    public LLVMCompileStage(final boolean isPie) {
+    public LLVMCompileStage(LLVMCompiler.Factory factory, boolean isPie) {
+        this.compilerFactory = factory;
         this.isPie = isPie;
     }
 
@@ -24,7 +27,7 @@ public class LLVMCompileStage implements Consumer<CompilationContext> {
 
         Iterator<Map.Entry<LoadedTypeDefinition, Path>> iterator = llvmState.getModulePaths().entrySet().iterator();
         context.runParallelTask(ctxt -> {
-            LLVMCompiler compiler = new LLVMCompiler(context, isPie);
+            LLVMCompiler compiler = compilerFactory.create(context, isPie);
             for (;;) {
                 Map.Entry<LoadedTypeDefinition, Path> entry;
                 synchronized (iterator) {

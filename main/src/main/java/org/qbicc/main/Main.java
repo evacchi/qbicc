@@ -51,6 +51,7 @@ import org.qbicc.driver.plugin.DriverPlugin;
 import org.qbicc.interpreter.Vm;
 import org.qbicc.interpreter.VmThread;
 import org.qbicc.interpreter.impl.VmImpl;
+import org.qbicc.machine.arch.Cpu;
 import org.qbicc.machine.arch.Platform;
 import org.qbicc.machine.object.ObjectFileProvider;
 import org.qbicc.machine.probe.CProbe;
@@ -85,7 +86,9 @@ import org.qbicc.plugin.layout.ObjectAccessLoweringBuilder;
 import org.qbicc.plugin.linker.LinkStage;
 import org.qbicc.plugin.llvm.LLVMCompatibleBasicBlockBuilder;
 import org.qbicc.plugin.llvm.LLVMCompileStage;
+import org.qbicc.plugin.llvm.LLVMCompiler;
 import org.qbicc.plugin.llvm.LLVMDefaultModuleCompileStage;
+import org.qbicc.plugin.llvm.LLVMEmscriptenModuleCompileStage;
 import org.qbicc.plugin.llvm.LLVMGenerator;
 import org.qbicc.plugin.llvm.LLVMIntrinsics;
 import org.qbicc.plugin.llvm.LLVMReferencePointerFactory;
@@ -573,14 +576,25 @@ public class Main implements Callable<DiagnosticContext> {
                                 builder.addPreHook(Phase.GENERATE, new StringInternTableEmitter());
                                 builder.addPreHook(Phase.GENERATE, new SupersDisplayEmitter());
                                 builder.addPreHook(Phase.GENERATE, new DispatchTableEmitter());
-                                builder.addPreHook(Phase.GENERATE, new LLVMGenerator(isPie ? 2 : 0, isPie ? 2 : 0, LLVMReferencePointerFactory.SIMPLE));
+
+                                if (platform.getCpu() == Cpu.WASM32) {
+                                    builder.addPreHook(Phase.GENERATE, new LLVMGenerator(isPie ? 2 : 0, isPie ? 2 : 0, LLVMReferencePointerFactory.COLLECTED));
+                                } else {
+                                    builder.addPreHook(Phase.GENERATE, new LLVMGenerator(isPie ? 2 : 0, isPie ? 2 : 0, LLVMReferencePointerFactory.SIMPLE));
+                                }
 
                                 builder.addPostHook(Phase.GENERATE, new DotGenerator(Phase.GENERATE, graphGenConfig));
                                 if (compileOutput) {
-                                    builder.addPostHook(Phase.GENERATE, new LLVMCompileStage(isPie));
+                                    builder.addPostHook(Phase.GENERATE, new LLVMCompileStage(LLVMCompiler.FACTORY.apply(platform), isPie));
                                 }
                                 builder.addPostHook(Phase.GENERATE, new MethodDataEmitter());
-                                builder.addPostHook(Phase.GENERATE, new LLVMDefaultModuleCompileStage(isPie, compileOutput, LLVMReferencePointerFactory.SIMPLE));
+
+                                if (platform.getCpu() == Cpu.WASM32) {
+                                    builder.addPostHook(Phase.GENERATE, new LLVMEmscriptenModuleCompileStage(isPie, compileOutput, LLVMReferencePointerFactory.SIMPLE));
+                                } else {
+                                    builder.addPostHook(Phase.GENERATE, new LLVMDefaultModuleCompileStage(isPie, compileOutput, LLVMReferencePointerFactory.SIMPLE));
+                                }
+
                                 if (compileOutput) {
                                     builder.addPostHook(Phase.GENERATE, new LinkStage(outputName, isPie, librarySearchPaths));
                                 }
