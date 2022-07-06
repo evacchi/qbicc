@@ -1,5 +1,7 @@
 package org.qbicc.tests;
 
+import org.qbicc.runtime.CNative;
+import org.qbicc.runtime.CNative.export;
 import org.qbicc.tests.snippets.ArithmeticCompare;
 import org.qbicc.tests.snippets.ArithmeticNegation;
 import org.qbicc.tests.snippets.Arrays;
@@ -18,6 +20,16 @@ import org.qbicc.tests.snippets.TryCatch;
  */
 public final class TestRunner {
     private TestRunner() {}
+
+    @export
+    public static int proxy_abi_version_0_2_0(int memory_size) {
+        return 0;
+    }
+
+    @export
+    public static void proxy_on_memory_allocate() {
+
+    }
 
     public static void main(String[] args) throws Throwable {
         if (args.length == 0) {
