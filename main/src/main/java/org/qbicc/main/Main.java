@@ -456,7 +456,7 @@ public class Main implements Callable<DiagnosticContext> {
                                 builder.addPreHook(Phase.ADD, VIO::get);
                                 builder.addPreHook(Phase.ADD, VFS::initialize);
                                 builder.addPreHook(Phase.ADD, Main::mountInitialFileSystem);
-//                                builder.addPreHook(Phase.ADD, new VMHelpersSetupHook());
+                                builder.addPreHook(Phase.ADD, new VMHelpersSetupHook());
                                 builder.addPreHook(Phase.ADD, new InitAppClassLoaderHook());
                                 builder.addPreHook(Phase.ADD, compilationContext -> {
                                     Vm vm = compilationContext.getVm();
