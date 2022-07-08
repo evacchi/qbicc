@@ -1,7 +1,10 @@
 package org.qbicc.tests;
 
+import org.qbicc.runtime.Build;
 import org.qbicc.runtime.CNative;
 import org.qbicc.runtime.CNative.export;
+import org.qbicc.runtime.CNative.extern;
+import org.qbicc.runtime.Hidden;
 import org.qbicc.tests.snippets.ArithmeticCompare;
 import org.qbicc.tests.snippets.ArithmeticNegation;
 import org.qbicc.tests.snippets.Arrays;
@@ -14,6 +17,10 @@ import org.qbicc.tests.snippets.MathMinMax;
 import org.qbicc.tests.snippets.MethodHandle;
 import org.qbicc.tests.snippets.Synchronized;
 import org.qbicc.tests.snippets.TryCatch;
+
+import java.util.List;
+
+import static org.qbicc.runtime.CNative.word;
 
 /**
  * The main test coordinator.
@@ -38,7 +45,9 @@ public final class TestRunner {
             return; // unreachable
         }
         String test = args[0];
+        System.out.println(List.of(args));
         String[] testArgs = java.util.Arrays.copyOfRange(args, 1, args.length);
+        System.out.println(List.of(testArgs));
         switch (test) {
             case "snippet-ArithmeticCompare" -> ArithmeticCompare.main(testArgs);
             case "snippet-ArithmeticNegation" -> ArithmeticNegation.main(testArgs);

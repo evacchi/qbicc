@@ -96,13 +96,13 @@ final class EmscriptenCCompilerInvokerImpl extends AbstractEmscriptenInvoker imp
             }
         }
 
-        appendEmscriptenPorts(cmd);
-        enableExceptions(cmd);
+//        appendEmscriptenPorts(cmd);
+//        enableExceptions(cmd);
 
         Collections.addAll(cmd,
             "-Wno-override-module",
             "-mbulk-memory",
-            "-g",
+//            "-g",
             "-c", "-x", sourceLanguageArg(), "-o", getOutputPath().toString(), "-");
     }
 

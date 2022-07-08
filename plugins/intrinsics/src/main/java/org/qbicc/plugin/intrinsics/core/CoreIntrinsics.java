@@ -327,31 +327,35 @@ public final class CoreIntrinsics {
         MethodElement getSourceCodeIndexListElement = methodFinder.getMethod(jsfcClass, "getSourceCodeIndexList");
         ConstructorElement jsfcConstructor = methodFinder.getConstructor(jsfcClass, intToVoidDesc);
 
-        InstanceIntrinsic fillInStackTrace = (builder, instance, target, arguments) -> {
-            Value frameCount = builder.getFirstBuilder().call(
-                builder.staticMethod(getFrameCountElement),
-                List.of(instance));
-            ClassObjectType jsfcClassType = (ClassObjectType) ctxt.getBootstrapClassContext().findDefinedType(jsfcClass).load().getObjectType();
-            CompoundType compoundType = Layout.get(ctxt).getInstanceLayoutInfo(jsfcClassType.getDefinition()).getCompoundType();
-            LiteralFactory lf = ctxt.getLiteralFactory();
-            Value visitor = builder.getFirstBuilder().new_(jsfcClassType, lf.literalOfType(jsfcClassType), lf.literalOf(compoundType.getSize()), lf.literalOf(compoundType.getAlign()));
-            builder.call(
-                builder.getFirstBuilder().constructorOf(visitor, jsfcConstructor),
-                List.of(frameCount));
-            builder.call(
-                builder.getFirstBuilder().staticMethod(walkStackElement),
-                List.of(instance, visitor));
+//        InstanceIntrinsic fillInStackTrace = (builder, instance, target, arguments) -> {
+//            Value frameCount = builder.getFirstBuilder().call(
+//                builder.staticMethod(getFrameCountElement),
+//                List.of(instance));
+//            ClassObjectType jsfcClassType = (ClassObjectType) ctxt.getBootstrapClassContext().findDefinedType(jsfcClass).load().getObjectType();
+//            CompoundType compoundType = Layout.get(ctxt).getInstanceLayoutInfo(jsfcClassType.getDefinition()).getCompoundType();
+//            LiteralFactory lf = ctxt.getLiteralFactory();
+//            Value visitor = builder.getFirstBuilder().new_(jsfcClassType, lf.literalOfType(jsfcClassType), lf.literalOf(compoundType.getSize()), lf.literalOf(compoundType.getAlign()));
+//            builder.call(
+//                builder.getFirstBuilder().constructorOf(visitor, jsfcConstructor),
+//                List.of(frameCount));
+//            builder.call(
+//                builder.getFirstBuilder().staticMethod(walkStackElement),
+//                List.of(instance, visitor));
+//
+//            // set Throwable#backtrace and Throwable#depth fields
+//            DefinedTypeDefinition jlt = classContext.findDefinedType("java/lang/Throwable");
+//            LoadedTypeDefinition jltVal = jlt.load();
+//            FieldElement backtraceField = jltVal.findField("backtrace");
+//            FieldElement depthField = jltVal.findField("depth");
+//            Value backtraceValue = builder.getFirstBuilder().call(
+//                builder.virtualMethodOf(visitor, getSourceCodeIndexListElement),
+//                List.of());
+//            builder.store(builder.instanceFieldOf(builder.referenceHandle(instance), backtraceField), backtraceValue, SingleUnshared);
+//            builder.store(builder.instanceFieldOf(builder.referenceHandle(instance), depthField), frameCount, SingleUnshared);
+//            return instance;
+//        };
 
-            // set Throwable#backtrace and Throwable#depth fields
-            DefinedTypeDefinition jlt = classContext.findDefinedType("java/lang/Throwable");
-            LoadedTypeDefinition jltVal = jlt.load();
-            FieldElement backtraceField = jltVal.findField("backtrace");
-            FieldElement depthField = jltVal.findField("depth");
-            Value backtraceValue = builder.getFirstBuilder().call(
-                builder.virtualMethodOf(visitor, getSourceCodeIndexListElement),
-                List.of());
-            builder.store(builder.instanceFieldOf(builder.referenceHandle(instance), backtraceField), backtraceValue, SingleUnshared);
-            builder.store(builder.instanceFieldOf(builder.referenceHandle(instance), depthField), frameCount, SingleUnshared);
+        InstanceIntrinsic fillInStackTrace = (builder, instance, target, arguments) -> {
             return instance;
         };
 
