@@ -84,6 +84,7 @@ public final class CProbe {
             if (errorReporter != null) {
                 inv.setMessageHandler(new ToolMessageHandler() {
                     public void handleMessage(final ToolInvoker invoker, final Level level, final String file, final int line, final int column, final String message) {
+                        System.out.println(items);
                         if (level == Level.ERROR) {
                             errorReporter.error(Location.builder().setSourceFilePath(file).setLineNumber(line).build(), "%s: %s", invoker.getTool().getToolName(), message);
                         } else if (level == Level.WARNING) {

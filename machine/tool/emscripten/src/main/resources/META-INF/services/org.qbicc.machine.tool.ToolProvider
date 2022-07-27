@@ -1,2 +1,2 @@
-org.qbicc.machine.tool.wasi.WasiToolProvider
-#org.qbicc.machine.tool.emscripten.EmscriptenToolProvider
+#org.qbicc.machine.tool.wasi.WasiToolProvider
+org.qbicc.machine.tool.emscripten.EmscriptenToolProvider

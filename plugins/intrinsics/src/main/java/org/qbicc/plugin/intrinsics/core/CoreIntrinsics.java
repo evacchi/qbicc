@@ -85,7 +85,7 @@ public final class CoreIntrinsics {
         registerJavaLangSystemIntrinsics(ctxt);
         registerJavaLangStackTraceElementInstrinsics(ctxt);
         registerJavaLangThreadIntrinsics(ctxt);
-        if (ctxt.getPlatform().getCpu() != Cpu.WASM32) {
+        if (ctxt.getPlatform().getCpu() == Cpu.WASM32) {
             registerEmptyJavaLangThrowableIntrinsics(ctxt);
         } else {
             registerJavaLangThrowableIntrinsics(ctxt);
@@ -368,18 +368,18 @@ public final class CoreIntrinsics {
         ClassContext classContext = ctxt.getBootstrapClassContext();
         RuntimeMethodFinder methodFinder = RuntimeMethodFinder.get(ctxt);
 
-        String jsfcClass = "org/qbicc/runtime/stackwalk/JavaStackFrameCache";
-        String jswClass = "org/qbicc/runtime/stackwalk/JavaStackWalker";
+//        String jsfcClass = "org/qbicc/runtime/stackwalk/JavaStackFrameCache";
+//        String jswClass = "org/qbicc/runtime/stackwalk/JavaStackWalker";
 
         ClassTypeDescriptor jltDesc = ClassTypeDescriptor.synthesize(classContext, "java/lang/Throwable");
-
-        MethodDescriptor intToVoidDesc = MethodDescriptor.synthesize(classContext, BaseTypeDescriptor.V, List.of(BaseTypeDescriptor.I));
-
-        MethodElement getFrameCountElement = methodFinder.getMethod(jswClass, "getFrameCount");
-        MethodElement walkStackElement = methodFinder.getMethod(jswClass, "walkStack");
-
-        MethodElement getSourceCodeIndexListElement = methodFinder.getMethod(jsfcClass, "getSourceCodeIndexList");
-        ConstructorElement jsfcConstructor = methodFinder.getConstructor(jsfcClass, intToVoidDesc);
+//
+//        MethodDescriptor intToVoidDesc = MethodDescriptor.synthesize(classContext, BaseTypeDescriptor.V, List.of(BaseTypeDescriptor.I));
+//
+//        MethodElement getFrameCountElement = methodFinder.getMethod(jswClass, "getFrameCount");
+//        MethodElement walkStackElement = methodFinder.getMethod(jswClass, "walkStack");
+//
+//        MethodElement getSourceCodeIndexListElement = methodFinder.getMethod(jsfcClass, "getSourceCodeIndexList");
+//        ConstructorElement jsfcConstructor = methodFinder.getConstructor(jsfcClass, intToVoidDesc);
 
         InstanceIntrinsic fillInStackTrace = (builder, instance, target, arguments) -> instance;
 
