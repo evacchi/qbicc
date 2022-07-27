@@ -222,7 +222,7 @@ public final class VMHelpers {
         // TODO once invokedynamic is working for lambda expressions use addr_of_function to fetch the correct function pointer
         //function_ptr<UnaryOperator<void_ptr>> runFuncPtr = addr_of_function(VMHelpers::threadWrapperNative);
 
-        if (Build.Target.isWasm()) {
+        if (Build.Target.isPThreads()) {
             return;
         }
 
