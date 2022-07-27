@@ -8,7 +8,7 @@ import static org.qbicc.runtime.CNative.*;
  * The libunwind library API @ <a href="https://www.nongnu.org/libunwind/docs.html">https://www.nongnu.org/libunwind/docs.html</a>
  */
 @define("UNW_LOCAL_ONLY")
-@include("<libunwind.h>")
+@include(value = "<libunwind.h>", unless = Build.Target.IsWasm.class)
 @lib(value = "unwind", unless = { Build.Target.IsMacOs.class, Build.Target.IsWasm.class } )
 public final class LibUnwind {
     private LibUnwind() {}

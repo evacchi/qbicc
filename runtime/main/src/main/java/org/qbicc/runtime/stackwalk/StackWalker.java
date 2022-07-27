@@ -64,7 +64,7 @@ public final class StackWalker extends StackObject {
     }
 
     public void_ptr getIp() {
-        if (Build.Target.isWasm()) word(0);
+        if (Build.Target.isWasm()) return word(0);
 
         if (! ready) throw new IllegalStateException();
         unw_word_t ip = auto();
@@ -73,7 +73,7 @@ public final class StackWalker extends StackObject {
     }
 
     public void_ptr getSp() {
-        if (Build.Target.isWasm()) word(0);
+        if (Build.Target.isWasm()) return word(0);
 
         if (! ready) throw new IllegalStateException();
         unw_word_t sp = auto();
