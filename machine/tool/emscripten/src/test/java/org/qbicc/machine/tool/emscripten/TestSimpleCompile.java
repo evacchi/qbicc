@@ -18,6 +18,7 @@ import org.qbicc.machine.tool.ToolProvider;
 import org.qbicc.machine.tool.ToolUtil;
 import org.qbicc.machine.tool.process.InputSource;
 import org.junit.jupiter.api.Test;
+import org.qbicc.machine.tool.wasm.shared.WasmCCompilerInvoker;
 
 /**
  *
@@ -36,7 +37,7 @@ public class TestSimpleCompile {
         final Iterator<EmscriptenToolChainImpl> iterator = tools.iterator();
         assumeTrue(iterator.hasNext());
         final EmscriptenToolChainImpl gccCompiler = iterator.next();
-        final EmscriptenCCompilerInvoker ib = gccCompiler.newCompilerInvoker();
+        final WasmCCompilerInvoker ib = gccCompiler.newCompilerInvoker();
         ib.setOutputPath(objectFilePath);
         ib.setMessageHandler(new ToolMessageHandler() {
             public void handleMessage(final ToolInvoker invoker, final Level level, final String file, final int line, final int column, final String message) {

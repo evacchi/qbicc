@@ -1,25 +1,25 @@
-package org.qbicc.machine.tool.emscripten;
+package org.qbicc.machine.tool.wasi;
+
+import io.smallrye.common.constraint.Assert;
+import org.qbicc.machine.tool.process.InputSource;
+import org.qbicc.machine.tool.wasm.shared.WasmCCompilerInvoker;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.qbicc.machine.tool.process.InputSource;
-import io.smallrye.common.constraint.Assert;
-import org.qbicc.machine.tool.wasm.shared.WasmCCompilerInvoker;
-
 /**
  *
  */
-final class EmscriptenCCompilerInvokerImpl extends AbstractEmscriptenInvoker implements WasmCCompilerInvoker {
+final class WasiCCompilerInvokerImpl extends AbstractWasiInvoker implements WasmCCompilerInvoker {
     private final List<Path> includePaths = new ArrayList<>(1);
     private final List<String> definedSymbols = new ArrayList<>(2);
     private InputSource inputSource = InputSource.empty();
     private Path outputPath = TMP.resolve("qbicc-output." + getTool().getPlatform().getObjectType().objectSuffix());
     private SourceLanguage sourceLanguage = SourceLanguage.C;
 
-    EmscriptenCCompilerInvokerImpl(final EmscriptenToolChainImpl tool) {
+    WasiCCompilerInvokerImpl(final WasiToolChainImpl tool) {
         super(tool);
     }
 

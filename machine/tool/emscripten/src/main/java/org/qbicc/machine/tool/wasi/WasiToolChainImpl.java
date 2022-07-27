@@ -1,26 +1,26 @@
-package org.qbicc.machine.tool.emscripten;
+package org.qbicc.machine.tool.wasi;
 
 import java.nio.file.Path;
 
-import org.qbicc.machine.arch.Platform;
 import io.smallrye.common.version.VersionScheme;
+import org.qbicc.machine.arch.Platform;
 import org.qbicc.machine.tool.wasm.shared.WasmCCompilerInvoker;
 import org.qbicc.machine.tool.wasm.shared.WasmLinkerInvoker;
 import org.qbicc.machine.tool.wasm.shared.WasmToolChain;
 
-final class EmscriptenToolChainImpl implements WasmToolChain {
+final class WasiToolChainImpl implements WasmToolChain {
     private final Path executablePath;
     private final Platform platform;
     private final String version;
 
-    EmscriptenToolChainImpl(final Path executablePath, final Platform platform, final String version) {
+    WasiToolChainImpl(final Path executablePath, final Platform platform, final String version) {
         this.executablePath = executablePath;
         this.platform = platform;
         this.version = version;
     }
 
     public String getImplementationName() {
-        return "Emscripten (LLVM)";
+        return "WASI-SDK (LLVM)";
     }
 
     Path getExecutablePath() {
@@ -28,11 +28,11 @@ final class EmscriptenToolChainImpl implements WasmToolChain {
     }
 
     public WasmCCompilerInvoker newCompilerInvoker() {
-        return new EmscriptenCCompilerInvokerImpl(this);
+        return new WasiCCompilerInvokerImpl(this);
     }
 
     public WasmLinkerInvoker newLinkerInvoker() {
-        return new EmscriptenLinkerInvokerImpl(this);
+        return new WasiLinkerInvokerImpl(this);
     }
 
     public Platform getPlatform() {

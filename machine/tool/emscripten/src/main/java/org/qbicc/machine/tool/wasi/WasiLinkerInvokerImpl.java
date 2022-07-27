@@ -1,4 +1,4 @@
-package org.qbicc.machine.tool.emscripten;
+package org.qbicc.machine.tool.wasi;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -11,14 +11,14 @@ import org.qbicc.machine.tool.wasm.shared.WasmLinkerInvoker;
 /**
  *
  */
-final class EmscriptenLinkerInvokerImpl extends AbstractEmscriptenInvoker implements WasmLinkerInvoker {
+final class WasiLinkerInvokerImpl extends AbstractWasiInvoker implements WasmLinkerInvoker {
     private final List<Path> libraryPaths = new ArrayList<>(4);
     private final List<String> libraries = new ArrayList<>(4);
     private final List<Path> objectFiles = new ArrayList<>(4);
     private Path outputPath = TMP.resolve("qbicc-output-image");
     private boolean isPie = false;
 
-    EmscriptenLinkerInvokerImpl(final EmscriptenToolChainImpl tool) {
+    WasiLinkerInvokerImpl(final WasiToolChainImpl tool) {
         super(tool);
     }
 
