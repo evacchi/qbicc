@@ -271,7 +271,10 @@ public final class CoreIntrinsics {
             // TODO implement
             return ctxt.getLiteralFactory().literalOf(true);
         };
-        intrinsics.registerIntrinsic(compIntrDesc, "saveNativeThread", saveNativeThreadDesc, saveNativeThread);
+
+        if (ctxt.getPlatform().getCpu() != Cpu.WASM32) {
+            intrinsics.registerIntrinsic(compIntrDesc, "saveNativeThread", saveNativeThreadDesc, saveNativeThread);
+        }
 
         /* private native void start0(); */
         InstanceIntrinsic start0 = (builder, instance, target, arguments) -> {

@@ -383,7 +383,7 @@ public class Main implements Callable<DiagnosticContext> {
                             // add additional manual initializers by chaining `.andThen(...)`
                             builder.setVmFactory(cc -> {
                                 CoreClasses.init(cc);
-                                ThrowExceptionHelper.init(cc);
+//                                ThrowExceptionHelper.init(cc);
                                 return VmImpl.create(cc,
                                     new BasicHeaderManualInitializer(cc)
                                 );
@@ -453,7 +453,7 @@ public class Main implements Callable<DiagnosticContext> {
                                 builder.addPreHook(Phase.ADD, CoreClasses::get);
                                 builder.addPreHook(Phase.ADD, ReflectionIntrinsics::register);
                                 builder.addPreHook(Phase.ADD, Reflection::get);
-                                builder.addPreHook(Phase.ADD, ThrowExceptionHelper::get);
+//                                builder.addPreHook(Phase.ADD, ThrowExceptionHelper::get);
                                 builder.addPreHook(Phase.ADD, GcCommon::registerIntrinsics);
                                 builder.addPreHook(Phase.ADD, compilationContext -> {
                                     Vm vm = compilationContext.getVm();
