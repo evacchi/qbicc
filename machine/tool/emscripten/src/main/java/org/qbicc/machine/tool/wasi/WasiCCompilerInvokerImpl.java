@@ -97,22 +97,10 @@ final class WasiCCompilerInvokerImpl extends AbstractWasiInvoker implements Wasm
             }
         }
 
-        appendEmscriptenPorts(cmd);
-        enableExceptions(cmd);
-
         Collections.addAll(cmd,
             "-Wno-override-module",
-            "-mbulk-memory",
             "-g",
             "-c", "-x", sourceLanguageArg(), "-o", getOutputPath().toString(), "-");
-    }
-
-    private void appendEmscriptenPorts(List<String> cmd) {
-        Collections.addAll(cmd, "-sUSE_ZLIB");
-    }
-
-    private void enableExceptions(final List<String> cmd) {
-        Collections.addAll(cmd, "-fexceptions");
     }
 
     private String sourceLanguageArg() {

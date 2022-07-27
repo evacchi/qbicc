@@ -23,7 +23,7 @@ import org.qbicc.machine.tool.wasm.shared.WasmCCompilerInvoker;
 /**
  *
  */
-public class TestSimpleCompile {
+public class TestEmscriptenSimpleCompile {
     @Test
     public void testSimpleCompile() throws Exception {
         final Path objectFilePath = Files.createTempFile("temp", ".wasm");
@@ -33,7 +33,7 @@ public class TestSimpleCompile {
         Path clang = ToolUtil.findExecutable("emcc");
         assumeTrue(clang != null);
         final Iterable<EmscriptenToolChainImpl> tools = ToolProvider.findAllTools(EmscriptenToolChainImpl.class, plaf, c -> true,
-            TestSimpleCompile.class.getClassLoader(), List.of(clang));
+            TestEmscriptenSimpleCompile.class.getClassLoader(), List.of(clang));
         final Iterator<EmscriptenToolChainImpl> iterator = tools.iterator();
         assumeTrue(iterator.hasNext());
         final EmscriptenToolChainImpl gccCompiler = iterator.next();

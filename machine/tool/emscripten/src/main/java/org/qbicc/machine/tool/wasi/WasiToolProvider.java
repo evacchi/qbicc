@@ -27,7 +27,8 @@ public class WasiToolProvider implements ToolProvider {
         return list;
     }
 
-    static final Pattern VERSION_PATTERN = Pattern.compile("^emcc \\(Emscripten .+\\) (.+)$");
+    static final Pattern VERSION_PATTERN = Pattern.compile("^clang version ([0-9]+\\.[0-9]\\.+[0-9]+) .*$");
+    static final String TARGET_STRING = "Target: wasm32-unknown-wasi";
 
     private <T extends Tool> void tryOne(final Class<T> type, final Platform platform, final ArrayList<T> list, final Path path) {
         if (path != null && Files.isExecutable(path)) {
@@ -44,6 +45,7 @@ public class WasiToolProvider implements ToolProvider {
                         matcher = VERSION_PATTERN.matcher(line);
                         if (matcher.find()) {
                             res.version = matcher.group(1);
+                        } else if (line.equals(TARGET_STRING)) {
                             res.match = true;
                         }
                     }
