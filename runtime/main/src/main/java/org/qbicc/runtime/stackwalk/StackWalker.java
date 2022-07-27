@@ -17,6 +17,8 @@ public final class StackWalker extends StackObject {
     boolean ready;
 
     public StackWalker() {
+        if (Build.Target.isWasm()) return;
+
         unw_context_t_ptr context_ptr = addr_of(refToPtr(this).sel().context);
         if (Build.Target.isAarch64() && ! Build.Target.isMacOs()) {
             // Expand the inline assembly that `unw_getcontext` corresponds to.
@@ -62,6 +64,8 @@ public final class StackWalker extends StackObject {
     }
 
     public void_ptr getIp() {
+        if (Build.Target.isWasm()) word(0);
+
         if (! ready) throw new IllegalStateException();
         unw_word_t ip = auto();
         unw_get_reg(addr_of(refToPtr(this).sel().cursor), UNW_REG_IP, addr_of(ip));
@@ -69,6 +73,8 @@ public final class StackWalker extends StackObject {
     }
 
     public void_ptr getSp() {
+        if (Build.Target.isWasm()) word(0);
+
         if (! ready) throw new IllegalStateException();
         unw_word_t sp = auto();
         unw_get_reg(addr_of(refToPtr(this).sel().cursor), UNW_REG_SP, addr_of(sp));
