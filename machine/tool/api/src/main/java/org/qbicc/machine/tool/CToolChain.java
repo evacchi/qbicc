@@ -55,7 +55,7 @@ public interface CToolChain extends Tool {
         List<CToolChain> working = new ArrayList<>();
         for (CToolChain toolChain : iterable) {
             CCompilerInvoker compilerInvoker = toolChain.newCompilerInvoker();
-            compilerInvoker.setSource(InputSource.from(//"#include <pthread.h>\n" +
+            compilerInvoker.setSource(InputSource.from("#include <pthread.h>\n" +
                 "int main() { return 0; }"));
             Path tempFile;
             try {
