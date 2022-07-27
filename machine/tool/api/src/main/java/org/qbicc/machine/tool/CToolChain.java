@@ -55,7 +55,7 @@ public interface CToolChain extends Tool {
         List<CToolChain> working = new ArrayList<>();
         for (CToolChain toolChain : iterable) {
             CCompilerInvoker compilerInvoker = toolChain.newCompilerInvoker();
-            compilerInvoker.setSource(InputSource.from("#include <pthread.h>\n" +
+            compilerInvoker.setSource(InputSource.from(//"#include <pthread.h>\n" +
                 "int main() { return 0; }"));
             Path tempFile;
             try {
@@ -65,7 +65,12 @@ public interface CToolChain extends Tool {
             }
             try {
                 compilerInvoker.setOutputPath(tempFile);
-                compilerInvoker.setMessageHandler(ToolMessageHandler.DISCARDING);
+                compilerInvoker.setMessageHandler(new ToolMessageHandler() {
+                    @Override
+                    public void handleMessage(ToolInvoker invoker, Level level, String file, int line, int column, String message) {
+                        System.out.println(message);
+                    }
+                });
                 compilerInvoker.invoke();
             } catch (IOException e) {
                 // didn't work; don't add it

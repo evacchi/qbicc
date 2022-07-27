@@ -81,7 +81,7 @@ final class WasiCCompilerInvokerImpl extends AbstractWasiInvoker implements Wasm
     void addArguments(final List<String> cmd) {
         if (sourceLanguage == SourceLanguage.C) {
             Collections.addAll(cmd, "-std=gnu11", "-f" + "input-charset=UTF-8");
-            cmd.add("-pthread");
+//            cmd.add("-pthread");
         }
         cmd.add("-pipe");
         for (Path includePath : includePaths) {

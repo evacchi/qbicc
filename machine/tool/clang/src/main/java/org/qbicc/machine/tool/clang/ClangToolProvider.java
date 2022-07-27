@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.qbicc.machine.arch.Cpu;
 import org.qbicc.machine.arch.Platform;
 import org.qbicc.machine.tool.Tool;
 import org.qbicc.machine.tool.ToolProvider;
@@ -30,6 +31,9 @@ public class ClangToolProvider implements ToolProvider {
     static final Pattern VERSION_PATTERN = Pattern.compile("^(?:clang|Apple (?:LLVM|clang)|Ubuntu (?:LLVM|clang)|Homebrew (?:LLVM|clang)) version (\\S+)");
 
     private <T extends Tool> void tryOne(final Class<T> type, final Platform platform, final ArrayList<T> list, final Path path) {
+        if (platform.getCpu() == Cpu.WASM32) {
+            return;
+        }
         if (path != null && Files.isExecutable(path)) {
             class Result {
                 String version;
