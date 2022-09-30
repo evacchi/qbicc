@@ -28,6 +28,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.jar.JarInputStream;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.smallrye.common.constraint.Assert;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.SettingsBuildingException;
@@ -388,6 +391,12 @@ public class Main implements Callable<DiagnosticContext> {
                             if (nogc) {
                                 new NoGcTypeSystemConfigurator().accept(tsBuilder);
                             }
+
+                            String s = new ObjectMapper()
+//                                .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+                                .writeValueAsString(tsBuilder);
+                            System.out.println(s);
+
                             builder.setTypeSystem(tsBuilder.build());
                             // add additional manual initializers by chaining `.andThen(...)`
                             builder.setVmFactory(cc -> {
